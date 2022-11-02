@@ -5,12 +5,12 @@ import 'react-app-polyfill/stable';
 import 'fast-text-encoding/text';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import App from './App';
+import ComingSoon from './ComingSoon';
 import './style/index.css';
 
 ReactDOM.render(
     <React.StrictMode>
-        <App />
+        <ComingSoon />
     </React.StrictMode>,
     document.getElementById('root')
 );
