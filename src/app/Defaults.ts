@@ -1,0 +1,1 @@
+export const DEFAULT_DISPLAY_TIME = 10;  // Seconds

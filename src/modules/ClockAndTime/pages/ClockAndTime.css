@@ -1,0 +1,25 @@
+.react-clock__face {
+
+    border: 1px solid white;
+}
+
+.react-clock__mark__body {
+    
+    background-color: white;
+    opacity: .5;
+}
+
+.react-clock__hour-hand__body {
+
+    background-color: white;
+}
+
+.react-clock__minute-hand__body {
+
+    background-color: white;
+}
+
+.react-clock__second-hand__body {
+
+    background-color: #f44336;
+}

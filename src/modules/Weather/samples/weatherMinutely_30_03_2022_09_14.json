@@ -1,0 +1,252 @@
+{
+    "lat": 43.6,
+    "lon": 1.44,
+    "timezone": "Europe/Paris",
+    "timezone_offset": 7200,
+    "minutely": [
+        {
+            "dt": 1648624440,
+            "precipitation": 0.1092
+        },
+        {
+            "dt": 1648624500,
+            "precipitation": 0.115
+        },
+        {
+            "dt": 1648624560,
+            "precipitation": 0.1276
+        },
+        {
+            "dt": 1648624620,
+            "precipitation": 0.1402
+        },
+        {
+            "dt": 1648624680,
+            "precipitation": 0.1528
+        },
+        {
+            "dt": 1648624740,
+            "precipitation": 0.1654
+        },
+        {
+            "dt": 1648624800,
+            "precipitation": 0.178
+        },
+        {
+            "dt": 1648624860,
+            "precipitation": 0.1898
+        },
+        {
+            "dt": 1648624920,
+            "precipitation": 0.2016
+        },
+        {
+            "dt": 1648624980,
+            "precipitation": 0.2134
+        },
+        {
+            "dt": 1648625040,
+            "precipitation": 0.2252
+        },
+        {
+            "dt": 1648625100,
+            "precipitation": 0.237
+        },
+        {
+            "dt": 1648625160,
+            "precipitation": 0.2528
+        },
+        {
+            "dt": 1648625220,
+            "precipitation": 0.2686
+        },
+        {
+            "dt": 1648625280,
+            "precipitation": 0.2844
+        },
+        {
+            "dt": 1648625340,
+            "precipitation": 0.3002
+        },
+        {
+            "dt": 1648625400,
+            "precipitation": 0.316
+        },
+        {
+            "dt": 1648625460,
+            "precipitation": 0.316
+        },
+        {
+            "dt": 1648625520,
+            "precipitation": 0.316
+        },
+        {
+            "dt": 1648625580,
+            "precipitation": 0.316
+        },
+        {
+            "dt": 1648625640,
+            "precipitation": 0.316
+        },
+        {
+            "dt": 1648625700,
+            "precipitation": 0.316
+        },
+        {
+            "dt": 1648625760,
+            "precipitation": 0.316
+        },
+        {
+            "dt": 1648625820,
+            "precipitation": 0.316
+        },
+        {
+            "dt": 1648625880,
+            "precipitation": 0.316
+        },
+        {
+            "dt": 1648625940,
+            "precipitation": 0.316
+        },
+        {
+            "dt": 1648626000,
+            "precipitation": 0.316
+        },
+        {
+            "dt": 1648626060,
+            "precipitation": 0.3074
+        },
+        {
+            "dt": 1648626120,
+            "precipitation": 0.2988
+        },
+        {
+            "dt": 1648626180,
+            "precipitation": 0.2902
+        },
+        {
+            "dt": 1648626240,
+            "precipitation": 0.2816
+        },
+        {
+            "dt": 1648626300,
+            "precipitation": 0.273
+        },
+        {
+            "dt": 1648626360,
+            "precipitation": 0.273
+        },
+        {
+            "dt": 1648626420,
+            "precipitation": 0.273
+        },
+        {
+            "dt": 1648626480,
+            "precipitation": 0.273
+        },
+        {
+            "dt": 1648626540,
+            "precipitation": 0.273
+        },
+        {
+            "dt": 1648626600,
+            "precipitation": 0.273
+        },
+        {
+            "dt": 1648626660,
+            "precipitation": 0.273
+        },
+        {
+            "dt": 1648626720,
+            "precipitation": 0.273
+        },
+        {
+            "dt": 1648626780,
+            "precipitation": 0.273
+        },
+        {
+            "dt": 1648626840,
+            "precipitation": 0.273
+        },
+        {
+            "dt": 1648626900,
+            "precipitation": 0.273
+        },
+        {
+            "dt": 1648626960,
+            "precipitation": 0.273
+        },
+        {
+            "dt": 1648627020,
+            "precipitation": 0.273
+        },
+        {
+            "dt": 1648627080,
+            "precipitation": 0.273
+        },
+        {
+            "dt": 1648627140,
+            "precipitation": 0.273
+        },
+        {
+            "dt": 1648627200,
+            "precipitation": 0.273
+        },
+        {
+            "dt": 1648627260,
+            "precipitation": 0.2658
+        },
+        {
+            "dt": 1648627320,
+            "precipitation": 0.2586
+        },
+        {
+            "dt": 1648627380,
+            "precipitation": 0.2514
+        },
+        {
+            "dt": 1648627440,
+            "precipitation": 0.2442
+        },
+        {
+            "dt": 1648627500,
+            "precipitation": 0.237
+        },
+        {
+            "dt": 1648627560,
+            "precipitation": 0.2442
+        },
+        {
+            "dt": 1648627620,
+            "precipitation": 0.2514
+        },
+        {
+            "dt": 1648627680,
+            "precipitation": 0.2586
+        },
+        {
+            "dt": 1648627740,
+            "precipitation": 0.2658
+        },
+        {
+            "dt": 1648627800,
+            "precipitation": 0.273
+        },
+        {
+            "dt": 1648627860,
+            "precipitation": 0.273
+        },
+        {
+            "dt": 1648627920,
+            "precipitation": 0.273
+        },
+        {
+            "dt": 1648627980,
+            "precipitation": 0.273
+        },
+        {
+            "dt": 1648628040,
+            "precipitation": 0.273
+        }
+    ]
+}
