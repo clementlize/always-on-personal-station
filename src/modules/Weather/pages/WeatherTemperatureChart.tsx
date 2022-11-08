@@ -4,18 +4,19 @@ import axios from "axios";
 import moment from "moment";
 import React, { useEffect, useState } from "react";
 import { CartesianGrid, Line, LineChart, ResponsiveContainer, XAxis, YAxis } from "recharts";
-import { City } from "../../Modules";
 import { getWeatherBaseUrl } from "../helpers/WeatherHelper";
 import { OpenWeatherMapOneCallResponse, WeatherHourly, WeatherOneCallPart } from "../model/OpenWeatherMapModel";
+import { City } from "../model/WeatherExtendedSettings";
 import { WeatherTemperatureChartPoint } from "../model/WeatherTemperatureChartModel";
 
 interface WeatherTemperatureChartProps {
     city: City;
+    appId: string;
 }
 
 const WeatherTemperatureChart: React.FC<WeatherTemperatureChartProps> = (props) => {
 
-    const { city } = props;
+    const { city, appId } = props;
 
     const theme = useTheme();
 
@@ -31,7 +32,7 @@ const WeatherTemperatureChart: React.FC<WeatherTemperatureChartProps> = (props) 
 
     const fetchWeatherHourly = () => {
 
-        const apiURL = `${getWeatherBaseUrl(city)}&exclude=`
+        const apiURL = `${getWeatherBaseUrl(city, appId)}&exclude=`
             + `${WeatherOneCallPart.CURRENT},`
             + `${WeatherOneCallPart.DAILY},`
             + `${WeatherOneCallPart.MINUTELY},`

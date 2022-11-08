@@ -1,7 +1,15 @@
 export interface ContentModule {
+
     type: ContentModuleType;
+    ref: string;
+
     disabled?: boolean;
-    display_time?: number;  // Seconds 
+    display_time?: number;  // Seconds
+
+    // When used, set these fields to the correct types.
+    // For example: in the Weather scope, settings will have the WeatherSettings type (use the key "as")
+    extended_settings?: any;
+    credentials?: any;
 }
 
 export enum ContentModuleType {
@@ -17,6 +25,6 @@ export const MODULE_NAMES: { [moduleType in ContentModuleType]: string } = {
 }
 
 
-export const CONTENT_MODULES_LOCALSTORAGE_NAME = "content_modules";
+export const USERDATA_LOCALSTORAGE_NAME = "user_data";
 
 export type ModuleRefs = { [moduleType in ContentModuleType]: React.RefObject<HTMLDivElement> };

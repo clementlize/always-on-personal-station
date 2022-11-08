@@ -1,6 +1,6 @@
-import { getEnabledModules } from "../controls/ControlsUtils";
 import { DEFAULT_DISPLAY_TIME } from "../Defaults";
 import { ContentModule, ContentModuleType } from "../model/ContentModule";
+import { getEnabledModules } from "../utils/AppUtils";
 
 export const getTotalTime = (modules: ContentModule[]): number => {
 

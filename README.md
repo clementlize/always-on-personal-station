@@ -18,13 +18,17 @@ The app jumps automatically between modules and shows progressBars. The time spe
 	 - Severe wind and temperatures badges
  - Next days weather forecast
 
+ ## Screenshots
+
 ## Roadmap
 
- - [ ] Module settings in the settings page (ex: weather location)
- - [ ] Better UX/UI for the settings page
- - [ ] Store API keys locally and in the app, instead of using .env variables
- - [ ] Create an onboarding process, showing tips and how to setup modules
+ - [ ] Insert screenshots in Readme
+ - [ ] Create a favicon
+ - [ ] Opening the settings page stops the progressBars
+ - [ ] Get a location selector to avoid filling the coordinates (Weather)
  - [ ] More than one module instance (manage Refs automatically)
+ - [ ] Create an onboarding process, showing tips and how to setup modules
+ - [ ] Manage translations
 
 ##  Usage instructions
 

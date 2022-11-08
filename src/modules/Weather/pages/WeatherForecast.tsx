@@ -2,19 +2,20 @@ import { Box, Card, CardActions, CardContent, Typography, useTheme } from "@mui/
 import axios from "axios";
 import moment from "moment";
 import React, { useEffect, useState } from "react";
+import Loading from "../../../app/landing/Loading";
 import { CARD_BACKGROUND_COLORMAP } from "../../../style/AppStyle";
-import Loading from "../../Loading/Loading";
-import { City } from "../../Modules";
 import { getWeatherBaseUrl } from "../helpers/WeatherHelper";
 import { OpenWeatherMapOneCallResponse, WeatherDaily, WeatherOneCallPart } from "../model/OpenWeatherMapModel";
+import { City, WeatherExtendedSettings } from "../model/WeatherExtendedSettings";
 
 interface WeatherForecastProps {
-    city: City;
+    moduleSettings: WeatherExtendedSettings | undefined;
+    credentials: { [key: string]: string } | undefined;
 }
 
 const WeatherForecast: React.FC<WeatherForecastProps> = (props) => {
 
-    const { city } = props;
+    const { moduleSettings, credentials } = props;
 
     const theme = useTheme();
 
@@ -24,9 +25,9 @@ const WeatherForecast: React.FC<WeatherForecastProps> = (props) => {
      */
     const [weatherDaily, setWeatherDaily] = useState<WeatherDaily[]>();
 
-    const fetchWeatherDaily = () => {
+    const fetchWeatherDaily = (city: City, appId: string) => {
 
-        const apiURL = `${getWeatherBaseUrl(city)}&exclude=`
+        const apiURL = `${getWeatherBaseUrl(city, appId)}&exclude=`
             + `${WeatherOneCallPart.CURRENT},`
             + `${WeatherOneCallPart.MINUTELY},`
             + `${WeatherOneCallPart.HOURLY},`
@@ -49,11 +50,20 @@ const WeatherForecast: React.FC<WeatherForecastProps> = (props) => {
      */
     useEffect(() => {
 
+        if (
+            !moduleSettings?.city?.name
+            || !moduleSettings.city.lat
+            || !moduleSettings.city.lon
+            || !credentials?.openweathermap_app_id
+        ) {
+            return;
+        }
+
         // First, fetch all the data
-        fetchWeatherDaily();
+        fetchWeatherDaily(moduleSettings.city, credentials.openweathermap_app_id);
 
         // Set the intervals
-        const intervalDaily = setInterval(() => fetchWeatherDaily(), 1000 * 60 * 60 * 3);  // 3 hours
+        const intervalDaily = setInterval(() => fetchWeatherDaily(moduleSettings.city!, credentials.openweathermap_app_id), 1000 * 60 * 60 * 3);  // 3 hours
 
         return () => { clearInterval(intervalDaily) }
     }, []);

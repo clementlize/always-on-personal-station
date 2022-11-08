@@ -1,8 +1,8 @@
 import { Box, LinearProgress } from "@mui/material";
 import { useEffect, useState } from "react";
-import { getEnabledModules } from "../controls/ControlsUtils";
 import { DEFAULT_DISPLAY_TIME } from "../Defaults";
 import { ContentModule, ContentModuleType, ModuleRefs } from "../model/ContentModule";
+import { getEnabledModules } from "../utils/AppUtils";
 import { getModuleFromTimeProgress, getTotalTime } from "./ProgressBarUtils";
 
 interface ProgressBarsProps {

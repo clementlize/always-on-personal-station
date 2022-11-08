@@ -6,20 +6,24 @@ import WindPowerIcon from '@mui/icons-material/WindPower';
 import { Alert, Box, Typography, useTheme } from "@mui/material";
 import axios from 'axios';
 import React, { useEffect, useState } from "react";
-import Loading from '../../Loading/Loading';
-import { City } from '../../Modules';
+import Loading from '../../../app/landing/Loading';
+import MissingInfo from '../../../app/landing/MissingInfo';
+import { ContentModuleType, MODULE_NAMES } from '../../../app/model/ContentModule';
+import { Credentials } from '../../../app/model/Credentials';
 import { getWeatherBaseUrl } from '../helpers/WeatherHelper';
 import { OpenWeatherMapOneCallResponse, WeatherCurrent, WeatherOneCallPart } from "../model/OpenWeatherMapModel";
+import { City, WeatherExtendedSettings } from '../model/WeatherExtendedSettings';
 import WeatherRainBar from "./WeatherRainBar";
 import WeatherTemperatureChart from './WeatherTemperatureChart';
 
 interface WeatherNowProps {
-    city: City;
+    moduleSettings: WeatherExtendedSettings | undefined;
+    credentials: { [key: string]: string } | undefined;
 }
 
 const WeatherNow: React.FC<WeatherNowProps> = (props) => {
 
-    const { city } = props;
+    const { moduleSettings, credentials } = props;
 
     const theme = useTheme();
 
@@ -29,9 +33,9 @@ const WeatherNow: React.FC<WeatherNowProps> = (props) => {
      */
     const [weatherCurrent, setWeatherCurrent] = useState<WeatherCurrent>();
 
-    const fetchWeatherCurrent = () => {
+    const fetchWeatherCurrent = (city: City, appId: string) => {
 
-        const apiURL = `${getWeatherBaseUrl(city)}&exclude=`
+        const apiURL = `${getWeatherBaseUrl(city, appId)}&exclude=`
             + `${WeatherOneCallPart.MINUTELY},`
             + `${WeatherOneCallPart.HOURLY},`
             + `${WeatherOneCallPart.DAILY},`
@@ -54,14 +58,26 @@ const WeatherNow: React.FC<WeatherNowProps> = (props) => {
      */
     useEffect(() => {
 
+        if (
+            !moduleSettings?.city?.name
+            || !moduleSettings.city.lat
+            || !moduleSettings.city.lon
+            || !credentials?.openweathermap_app_id
+        ) {
+            return;
+        }
+
         // First, fetch all the data
-        fetchWeatherCurrent();
+        fetchWeatherCurrent(moduleSettings.city, credentials![Credentials.OPENWEATHERMAP_APP_ID]);
 
         // Set the interval
-        const intervalCurrent = setInterval(() => { fetchWeatherCurrent() }, 1000 * 60 * 60 * 1);  // 1 hour
+        const intervalCurrent = setInterval(() => {
+            fetchWeatherCurrent(moduleSettings.city!, credentials![Credentials.OPENWEATHERMAP_APP_ID])
+        }, 1000 * 60 * 60 * 1);  // 1 hour
 
         return () => { clearInterval(intervalCurrent) }
-    }, []);
+
+    }, [moduleSettings, credentials]);
 
     const getTemperatureText = (weatherCurrent: WeatherCurrent): string => {
 
@@ -200,9 +216,17 @@ const WeatherNow: React.FC<WeatherNowProps> = (props) => {
         );
     }
 
-    if (!weatherCurrent) {
+    if (
+        !moduleSettings?.city?.name
+        || !moduleSettings.city.lat
+        || !moduleSettings.city.lon
+        || !credentials?.openweathermap_app_id
+    ) {
+        return (<MissingInfo pageName={MODULE_NAMES[ContentModuleType.WEATHER_NOW]} />);
+    }
 
-        return (<Loading pageName="Weather now" />);
+    if (!weatherCurrent) {
+        return (<Loading pageName={MODULE_NAMES[ContentModuleType.WEATHER_NOW]} />);
     }
 
     return (
@@ -241,7 +265,7 @@ const WeatherNow: React.FC<WeatherNowProps> = (props) => {
                             <MyLocationIcon fontSize="large" />
 
                             <Typography variant="h4" marginLeft={2}>
-                                {city.name}
+                                {moduleSettings.city.name}
                             </Typography>
                         </Box>
 
@@ -265,8 +289,14 @@ const WeatherNow: React.FC<WeatherNowProps> = (props) => {
 
                 </Box>
 
-                <WeatherTemperatureChart city={city} />
-                <WeatherRainBar city={city} />
+                <WeatherTemperatureChart
+                    city={moduleSettings.city}
+                    appId={credentials.openweathermap_app_id}
+                />
+                <WeatherRainBar
+                    city={moduleSettings.city}
+                    appId={credentials.openweathermap_app_id}
+                />
             </Box>
 
         </Box>

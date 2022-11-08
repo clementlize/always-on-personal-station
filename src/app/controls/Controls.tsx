@@ -1,18 +1,20 @@
 import { useState } from "react";
-import { ContentModule, ModuleRefs } from "../model/ContentModule";
+import { ModuleRefs } from "../model/ContentModule";
+import { UserData } from "../model/UserData";
 import ProgressBars from "../progressBar/ProgressBar";
 import SettingsPage from "../settings/SettingsPage";
 import ControlButtons from "./ControlButtons";
 
 interface ControlsProps {
-    modules: ContentModule[];
-    setModules: (modules: ContentModule[]) => void;
+    userData: UserData;
+    setUserData: (data: UserData) => void;
     moduleRefs: ModuleRefs;
 }
 
 const Controls: React.FC<ControlsProps> = (props) => {
 
-    const { modules, setModules, moduleRefs } = props;
+    const { userData, setUserData, moduleRefs } = props;
+
     const [lockScroll, setLockScroll] = useState<boolean>(false);
     const [openSettings, setOpenSettings] = useState<boolean>(false);
 
@@ -25,7 +27,7 @@ const Controls: React.FC<ControlsProps> = (props) => {
         <>
 
             <ProgressBars
-                modules={modules}
+                modules={userData.modules}
                 moduleRefs={moduleRefs}
                 lockScroll={lockScroll}
             />
@@ -39,8 +41,8 @@ const Controls: React.FC<ControlsProps> = (props) => {
 
             {openSettings &&
                 <SettingsPage
-                    modules={modules}
-                    setModules={(modules: ContentModule[]) => setModules(modules)}
+                    userData={userData}
+                    setUserData={(userData: UserData) => setUserData(userData)}
                     closeModal={() => setOpenSettings(false)}
                 />
             }

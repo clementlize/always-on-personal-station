@@ -2,14 +2,15 @@ import { CssBaseline, ThemeProvider } from "@mui/material";
 import { useEffect, useRef, useState } from "react";
 import "./App.css";
 import Controls from "./app/controls/Controls";
-import { getModulesFromLocalStorage } from "./app/controls/ControlsUtils";
-import { ContentModule, ContentModuleType, CONTENT_MODULES_LOCALSTORAGE_NAME, ModuleRefs } from "./app/model/ContentModule";
+import { ContentModuleType, ModuleRefs, USERDATA_LOCALSTORAGE_NAME } from "./app/model/ContentModule";
+import { UserData } from "./app/model/UserData";
+import { getUserDataFromLocalStorage } from "./app/utils/AppUtils";
 import { defaultTheme } from "./config/theme";
 import Modules from "./modules/Modules";
 
 const App = () => {
 
-    const [modules, setModules] = useState<ContentModule[]>(getModulesFromLocalStorage());
+    const [userData, setUserData] = useState<UserData>(getUserDataFromLocalStorage());
     const moduleRefs: ModuleRefs = {
         [ContentModuleType.CLOCK_AND_TIME]: useRef<HTMLDivElement>(null),
         [ContentModuleType.WEATHER_NOW]: useRef<HTMLDivElement>(null),
@@ -17,21 +18,21 @@ const App = () => {
     }
 
     /**
-     * Saving the modules in localStorage at each modification
+     * Saving the user data in localStorage at each modification
      */
     useEffect(() => {
-        if (modules) {
-            localStorage.setItem(CONTENT_MODULES_LOCALSTORAGE_NAME, JSON.stringify(modules));
+        if (userData) {
+            localStorage.setItem(USERDATA_LOCALSTORAGE_NAME, JSON.stringify(userData));
         }
-    }, [modules]);
+    }, [userData]);
 
     /**
      * When the page is loaded or when the list of modules is refreshed, 
      * go to the first module
      */
     useEffect(() => {
-        moduleRefs[modules[0].type].current?.scrollIntoView({ behavior: "smooth" });
-    }, [modules]);
+        moduleRefs[userData.modules[0].type].current?.scrollIntoView({ behavior: "smooth" });
+    }, [userData]);
 
     return (
 
@@ -41,13 +42,13 @@ const App = () => {
 
             {/* Everything that makes the app work, that isn't content */}
             <Controls
-                modules={modules}
-                setModules={(newModules: ContentModule[]) => setModules(newModules)}
+                userData={userData}
+                setUserData={(newData: UserData) => setUserData(newData)}
                 moduleRefs={moduleRefs}
             />
 
             <Modules
-                modules={modules}
+                userData={userData}
                 moduleRefs={moduleRefs}
             />
 

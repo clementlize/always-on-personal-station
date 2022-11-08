@@ -3,11 +3,13 @@ import axios from "axios";
 import interpolate from "color-interpolate";
 import moment from "moment";
 import { useEffect, useState } from "react";
-import { City } from "../../Modules";
 import { getWeatherBaseUrl } from "../helpers/WeatherHelper";
 import { OpenWeatherMapOneCallResponse, WeatherMinutely, WeatherOneCallPart } from "../model/OpenWeatherMapModel";
+import { City } from "../model/WeatherExtendedSettings";
+
 interface WeatherRainBarProps {
     city: City;
+    appId: string;
 }
 
 // Based on this article https://www.baranidesign.com/faq-articles/2020/1/19/rain-rate-intensity-classification
@@ -18,7 +20,7 @@ const RAIN_COLOR_1 = "#2c45b3";
 
 const WeatherRainBar: React.FC<WeatherRainBarProps> = (props) => {
 
-    const { city } = props;
+    const { city, appId } = props;
 
     /**
      * Usage: show the rain in the next hour
@@ -28,7 +30,7 @@ const WeatherRainBar: React.FC<WeatherRainBarProps> = (props) => {
 
     const fetchWeatherMinutely = () => {
 
-        const apiURL = `${getWeatherBaseUrl(city)}&exclude=`
+        const apiURL = `${getWeatherBaseUrl(city, appId)}&exclude=`
             + `${WeatherOneCallPart.CURRENT},`
             + `${WeatherOneCallPart.HOURLY},`
             + `${WeatherOneCallPart.DAILY},`
@@ -36,11 +38,8 @@ const WeatherRainBar: React.FC<WeatherRainBarProps> = (props) => {
 
         axios.get(apiURL)
             .then((response) => {
-
                 const weatherResponse = response.data as OpenWeatherMapOneCallResponse;
-
                 if (weatherResponse.minutely) {
-
                     setWeatherMinutely(weatherResponse.minutely);
                 }
             });
