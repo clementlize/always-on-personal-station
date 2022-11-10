@@ -29,7 +29,7 @@ const Controls: React.FC<ControlsProps> = (props) => {
             <ProgressBars
                 modules={userData.modules}
                 moduleRefs={moduleRefs}
-                lockScroll={lockScroll}
+                lockScroll={lockScroll || openSettings}
             />
 
             <ControlButtons

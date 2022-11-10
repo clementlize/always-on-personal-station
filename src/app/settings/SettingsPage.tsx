@@ -4,6 +4,7 @@ import { ContentModule } from "../model/ContentModule";
 import { UserData } from "../model/UserData";
 import { getDefaultUserData } from "../utils/AppUtils";
 import DiscardAlert from "./DiscardAlert";
+import SettingsAbout from "./SettingsAbout";
 import SettingsCredentials from "./SettingsCredentials";
 import SettingsModules from "./SettingsModules";
 
@@ -24,6 +25,7 @@ const Settings: React.FC<SettingsProps> = (props) => {
         MODULES = "modules",
         CREDENTIALS = "credentials",
         RESET_APP = "reset_app",
+        ABOUT = "about",
     }
     const [currentTab, setCurrentTab] = useState<SettingsTabs>(SettingsTabs.MODULES);
 
@@ -61,6 +63,7 @@ const Settings: React.FC<SettingsProps> = (props) => {
                                 <Tab label="Modules" value={SettingsTabs.MODULES} />
                                 <Tab label="Credentials" value={SettingsTabs.CREDENTIALS} />
                                 <Tab label="Reset app" value={SettingsTabs.RESET_APP} />
+                                <Tab label="About" value={SettingsTabs.ABOUT} />
                             </Tabs>
                         </Box>
 
@@ -105,6 +108,10 @@ const Settings: React.FC<SettingsProps> = (props) => {
                                 </Button>
 
                             </Box>
+                        }
+
+                        {currentTab === SettingsTabs.ABOUT &&
+                            <SettingsAbout />
                         }
                     </Box>
 

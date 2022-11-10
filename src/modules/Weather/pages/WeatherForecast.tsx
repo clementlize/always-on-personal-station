@@ -1,8 +1,11 @@
+import MyLocationIcon from '@mui/icons-material/MyLocation';
 import { Box, Card, CardActions, CardContent, Typography, useTheme } from "@mui/material";
 import axios from "axios";
 import moment from "moment";
 import React, { useEffect, useState } from "react";
 import Loading from "../../../app/landing/Loading";
+import MissingInfo from "../../../app/landing/MissingInfo";
+import { ContentModuleType, MODULE_NAMES } from "../../../app/model/ContentModule";
 import { CARD_BACKGROUND_COLORMAP } from "../../../style/AppStyle";
 import { getWeatherBaseUrl } from "../helpers/WeatherHelper";
 import { OpenWeatherMapOneCallResponse, WeatherDaily, WeatherOneCallPart } from "../model/OpenWeatherMapModel";
@@ -189,6 +192,15 @@ const WeatherForecast: React.FC<WeatherForecastProps> = (props) => {
         );
     }
 
+    if (
+        !moduleSettings?.city?.name
+        || !moduleSettings.city.lat
+        || !moduleSettings.city.lon
+        || !credentials?.openweathermap_app_id
+    ) {
+        return (<MissingInfo pageName={MODULE_NAMES[ContentModuleType.WEATHER_FORECAST]} />);
+    }
+
     if (!weatherDaily) {
 
         return (<Loading pageName="Weather forecast" />)
@@ -209,6 +221,19 @@ const WeatherForecast: React.FC<WeatherForecastProps> = (props) => {
                 flexDirection="column"
                 maxHeight={.9}
             >
+
+                <Box
+                    display="flex"
+                    alignItems="center"
+                    marginLeft={3}
+                    marginBottom={2}
+                >
+                    <MyLocationIcon fontSize="large" />
+
+                    <Typography variant="h4" marginLeft={2}>
+                        {moduleSettings.city.name}
+                    </Typography>
+                </Box>
 
                 <Box display="flex">
                     {weatherDaily.map((weatherDaily, index) => {

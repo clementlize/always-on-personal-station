@@ -1,7 +1,7 @@
-import _ from "lodash";
 import { ContentModule, ContentModuleType, USERDATA_LOCALSTORAGE_NAME } from "../model/ContentModule";
 import { Credentials } from "../model/Credentials";
 import { UserData } from "../model/UserData";
+import generateId from "./generateId";
 
 /**
 * Get the modules array from localStorage if available. 
@@ -22,7 +22,7 @@ export const getDefaultUserData = (): UserData => {
     return {
         modules: [{
             type: ContentModuleType.CLOCK_AND_TIME,
-            ref: _.uniqueId(),
+            ref: generateId(),
         }]
     };
 }

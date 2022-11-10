@@ -6,6 +6,8 @@ import { useState } from 'react';
 import WeatherSettings from "../../modules/Weather/pages/WeatherSettings";
 import { DEFAULT_DISPLAY_TIME } from "../Defaults";
 import { ContentModule, ContentModuleType, MODULE_NAMES } from "../model/ContentModule";
+import { getEnabledModules } from '../utils/AppUtils';
+import generateId from '../utils/generateId';
 import NewModuleModal from './NewModuleModal';
 
 interface SettingsModulesProps {
@@ -77,7 +79,7 @@ const SettingsModules: React.FC<SettingsModulesProps> = (props) => {
 
         const newModules = _.cloneDeep(modules);
         newModules.push({
-            ref: _.uniqueId(),
+            ref: generateId(),
             type: newModuleType,
         });
         setModules(newModules);
@@ -165,7 +167,9 @@ const SettingsModules: React.FC<SettingsModulesProps> = (props) => {
 
                                     <Switch
                                         checked={!module.disabled}
-                                        onChange={(e) => onSwitchChange(module, e.target.checked)} />
+                                        onChange={(e) => onSwitchChange(module, e.target.checked)}
+                                        disabled={!module.disabled && getEnabledModules(modules).length < 2}
+                                    />
 
                                     <Typography marginLeft={2}>
                                         {MODULE_NAMES[module.type]}

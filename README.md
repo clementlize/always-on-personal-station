@@ -18,14 +18,20 @@ The app jumps automatically between modules and shows progressBars. The time spe
 	 - Severe wind and temperatures badges
  - Next days weather forecast
 
- ## Screenshots
+## Screenshots
+![Clock and Time (screenshot)](./docs/screenshots/clock_and_time.jpeg)
+![Weather now (screenshot)](./docs/screenshots/weather_now.jpeg)
+![Weather forecast (screenshot)](./docs/screenshots/weather_forecast.jpeg)
+
+## Compatibility
+
+This app works on all modern browsers, and on Internet Explorer 11. Yes, you can give a new life to your Microsoft Surface RT (which is why I made the app originally 😄)
 
 ## Roadmap
 
  - [ ] Insert screenshots in Readme
  - [ ] Create a favicon
- - [ ] Opening the settings page stops the progressBars
- - [ ] Get a location selector to avoid filling the coordinates (Weather)
+ - [ ] Insert a location selector to avoid filling the coordinates (Weather)
  - [ ] More than one module instance (manage Refs automatically)
  - [ ] Create an onboarding process, showing tips and how to setup modules
  - [ ] Manage translations
@@ -36,7 +42,7 @@ The app jumps automatically between modules and shows progressBars. The time spe
 
 Browse [aops.clementlize.com](https://aops.clementlize.com) with your device, and you can start using the app.
 
-All the data you set (location, API keys, ...) is stored locally in your browser, there is no collection.
+All the data you set (location, API keys, ...) is stored locally in your browser, there is no collection, no database, your privacy is respected.
 
 ### Use project locally
 
@@ -49,9 +55,9 @@ You can use your own local version of the app. For this, you need a Node.JS deve
 
 This app is made using React. To learn React, check out the [React documentation](https://reactjs.org/). 
 
-## Contributing
+## Contribute
 
-Contributions are always welcome! Feel free to open an issue if you want to report a bug or ask for a feature.
+Contributions are always welcome! Feel free to open an issue if you want to report a bug or ask for a feature. Don't forget to search for an existing issue before creating one.
 
 If you're a developer and you want to create your own module, feel free to open a merge request. 
 

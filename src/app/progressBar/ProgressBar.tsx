@@ -90,6 +90,10 @@ const ProgressBars: React.FC<ProgressBarsProps> = (props) => {
         return Math.round((progressZeroed + 1) * 100 / maxTimeZeroed);
     }
 
+    if (getEnabledModules(modules).length < 2) {
+        return null;
+    }
+
     return (
 
         <Box
