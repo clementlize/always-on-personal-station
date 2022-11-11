@@ -27,15 +27,6 @@ The app jumps automatically between modules and shows progressBars. The time spe
 
 This app works on all modern browsers, and on Internet Explorer 11. Yes, you can give a new life to your Microsoft Surface RT (which is why I made the app originally 😄)
 
-## Roadmap
-
- - [ ] Insert screenshots in Readme
- - [ ] Create a favicon
- - [ ] Insert a location selector to avoid filling the coordinates (Weather)
- - [ ] More than one module instance (manage Refs automatically)
- - [ ] Create an onboarding process, showing tips and how to setup modules
- - [ ] Manage translations
-
 ##  Usage instructions
 
 ### Use the official deployment
@@ -54,6 +45,26 @@ You can use your own local version of the app. For this, you need a Node.JS deve
 - Run `yarn start` to start the project. It will open a tab in your browser. If not, browse `http://localhost:3000` to see the app.
 
 This app is made using React. To learn React, check out the [React documentation](https://reactjs.org/). 
+
+## Roadmap
+
+ - [ ] Make the app more responsive, especially the analog clock
+ - [ ] Create a favicon
+ - [ ] Insert a location selector to avoid filling the coordinates (Weather)
+ - [ ] More than one module instance (manage Refs automatically)
+ - [ ] Create an onboarding process, showing tips and how to setup modules
+ - [ ] Manage translations
+
+## In development
+
+ - [ ] Agenda: show upcoming events from Google Calendar
+ - [ ] Agenda: show a timetable (useful for students for example)
+ - [ ] Shared bikes: show the number of available bikes/slots in a station
+ - [ ] Raw data: display a chart with multiple data sources
+
+ ## Current ideas
+
+ - [ ] Music controler: show the currently playing music, and control it from the app
 
 ## Contribute
 
