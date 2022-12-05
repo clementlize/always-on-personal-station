@@ -1,6 +1,7 @@
 import { Box } from "@mui/material";
 import { useTheme } from "@mui/system";
 import axios from "axios";
+import _ from "lodash";
 import moment from "moment";
 import React, { useEffect, useState } from "react";
 import { CartesianGrid, Line, LineChart, ResponsiveContainer, XAxis, YAxis } from "recharts";
@@ -70,7 +71,6 @@ const WeatherTemperatureChart: React.FC<WeatherTemperatureChartProps> = (props) 
     useEffect(() => {
 
         if (!weatherHourly) {
-
             return;
         }
 
@@ -109,9 +109,10 @@ const WeatherTemperatureChart: React.FC<WeatherTemperatureChartProps> = (props) 
 
     }, [weatherHourly]);
 
-    if (!dataPoints || !minTemp || !maxTemp) {
+    if (!dataPoints || _.isNil(minTemp) || _.isNil(maxTemp)) {
 
         // TODO: ghost loading
+        console.log("Loading temperature chart");
         return (<Box />);
     }
 
@@ -137,7 +138,7 @@ const WeatherTemperatureChart: React.FC<WeatherTemperatureChartProps> = (props) 
                     <YAxis
                         width={50}
                         type="number"
-                        domain={[minTemp, maxTemp]}
+                        domain={[minTemp!, maxTemp!]}
                         yAxisId="left"
                         tickCount={10}
                         interval="preserveStartEnd"

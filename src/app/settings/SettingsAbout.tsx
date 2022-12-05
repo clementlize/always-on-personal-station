@@ -26,7 +26,7 @@ const SettingsAbout: React.FC<SettingsAboutProps> = () => {
             </Link>
 
             <Typography sx={{ marginTop: 2 }}>
-                Version 1.0.0
+                Version 1.0.1
             </Typography>
         </Box>
     );

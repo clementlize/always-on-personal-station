@@ -127,12 +127,12 @@ const WeatherForecast: React.FC<WeatherForecastProps> = (props) => {
 
         if (line === 0 && index >= 4) {
 
-            return (<Box />);
+            return (<Box key={index} />);
         }
 
         if (line === 1 && (index < 4 || index >= 8)) {
 
-            return (<Box />);
+            return (<Box key={index} />);
         }
 
         const colorCoefficient = index / 8;
