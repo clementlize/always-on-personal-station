@@ -1,3 +1,5 @@
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import { Box, Button, IconButton, Switch, TextField, Typography } from "@mui/material";
@@ -199,7 +201,7 @@ const SettingsModules: React.FC<SettingsModulesProps> = (props) => {
                                     >
 
                                         <TextField
-                                            label="Time"
+                                            label="Time spent (seconds)"
                                             type="number"
                                             value={module?.display_time ?? DEFAULT_DISPLAY_TIME}
                                             onChange={(e) => onTimeChange(module, parseInt(e.target.value))}
@@ -211,6 +213,7 @@ const SettingsModules: React.FC<SettingsModulesProps> = (props) => {
                                             onClick={() => moveUp(module)}
                                             disabled={index === 0}
                                         >
+                                            <ArrowDropUpIcon fontSize="small" />
                                             <Typography>
                                                 Move up
                                             </Typography>
@@ -222,6 +225,7 @@ const SettingsModules: React.FC<SettingsModulesProps> = (props) => {
                                             onClick={() => moveDown(module)}
                                             disabled={index === modules.length - 1}
                                         >
+                                            <ArrowDropDownIcon fontSize="small" />
                                             <Typography>
                                                 Move down
                                             </Typography>

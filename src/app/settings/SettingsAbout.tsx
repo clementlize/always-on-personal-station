@@ -19,11 +19,17 @@ const SettingsAbout: React.FC<SettingsAboutProps> = () => {
                 Made by <Link href="https://clementlize.com" target="_blank">Clément Lizé</Link>
             </Typography>
 
-            <Link href="https://github.com/clementlize/always-on-personal-station" target="_blank">
+            <Box>
                 <Typography>
-                    See project on Github.
+                    Source code is available on&nbsp;
+                    <Link href="https://github.com/clementlize/always-on-personal-station" target="_blank">
+                        Github.
+                    </Link>
                 </Typography>
-            </Link>
+                <Typography>
+                    Any issues? Any suggestions? Please report them here.
+                </Typography>
+            </Box>
 
             <Typography sx={{ marginTop: 2 }}>
                 Version 1.0.1
