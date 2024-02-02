@@ -1,6 +1,6 @@
 {
   "name": "always-on-personal-station",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "private": false,
   "dependencies": {
     "@babel/polyfill": "^7.12.1",
