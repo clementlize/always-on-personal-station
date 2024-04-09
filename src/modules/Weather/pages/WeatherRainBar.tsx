@@ -12,11 +12,11 @@ interface WeatherRainBarProps {
     appId: string;
 }
 
-// Based on this article https://www.baranidesign.com/faq-articles/2020/1/19/rain-rate-intensity-classification
-const HEAVIEST_RAIN_MM_PER_MINUTE = .130;
-const RAIN_COLOR_0 = "#ffffff00";
-const RAIN_COLOR_0_1 = "#a7b9fdc7";
-const RAIN_COLOR_1 = "#2c45b3";
+// Based on this article http://pluiesextremes.meteo.fr/france-metropole/Intensite-de-precipitations.html
+const HEAVIEST_RAIN_MM_PER_MINUTE = 7; // mm per hour
+const RAIN_COLOR_NONE = "#ffffff00";
+const RAIN_COLOR_MIDDLE = "#a7b9fdc7";
+const RAIN_COLOR_HEAVY = "#2c45b3";
 
 const WeatherRainBar: React.FC<WeatherRainBarProps> = (props) => {
 
@@ -71,7 +71,6 @@ const WeatherRainBar: React.FC<WeatherRainBarProps> = (props) => {
         }
 
         if (weatherMinute.precipitation > HEAVIEST_RAIN_MM_PER_MINUTE) {
-
             return 1;
         }
 
@@ -103,7 +102,7 @@ const WeatherRainBar: React.FC<WeatherRainBarProps> = (props) => {
 
                 {weatherMinutely.map((weatherMinute, index) => {
 
-                    const colorMap = interpolate([RAIN_COLOR_0, RAIN_COLOR_0_1, RAIN_COLOR_1]);
+                    const colorMap = interpolate([RAIN_COLOR_NONE, RAIN_COLOR_MIDDLE, RAIN_COLOR_HEAVY]);
 
                     return (
                         <Box
