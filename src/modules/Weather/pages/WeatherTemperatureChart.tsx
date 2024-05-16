@@ -1,12 +1,12 @@
-import { Box } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import { useTheme } from "@mui/system";
 import axios from "axios";
 import _ from "lodash";
 import moment from "moment";
 import React, { useEffect, useState } from "react";
 import { CartesianGrid, Line, LineChart, ResponsiveContainer, XAxis, YAxis } from "recharts";
-import { getWeatherBaseUrl } from "../helpers/WeatherHelper";
-import { OpenWeatherMapOneCallResponse, WeatherHourly, WeatherOneCallPart } from "../model/OpenWeatherMapModel";
+import { getWeatherBaseUrl, getWeatherUrlParams } from "../helpers/WeatherHelper";
+import { OpenWeatherMapOneCallResponse, WeatherOneCallHourly, WeatherOneCallPart } from "../model/OWMOneCallModels";
 import { City } from "../model/WeatherExtendedSettings";
 import { WeatherTemperatureChartPoint } from "../model/WeatherTemperatureChartModel";
 
@@ -15,40 +15,46 @@ interface WeatherTemperatureChartProps {
     appId: string;
 }
 
+// TODO: add rain to this chart
 const WeatherTemperatureChart: React.FC<WeatherTemperatureChartProps> = (props) => {
 
     const { city, appId } = props;
 
     const theme = useTheme();
 
-    const [dataPoints, setDataPoints] = React.useState<WeatherTemperatureChartPoint[]>();
-    const [minTemp, setMinTemp] = React.useState<number>();
-    const [maxTemp, setMaxTemp] = React.useState<number>();
+    const [dataPoints, setDataPoints] = useState<WeatherTemperatureChartPoint[]>();
+    const [minTemp, setMinTemp] = useState<number>();
+    const [maxTemp, setMaxTemp] = useState<number>();
 
     /**
          * Usage: show the temperature for the next 24hrs
          * Refresh interval: 1 hour
          */
-    const [weatherHourly, setWeatherHourly] = useState<WeatherHourly[]>();
+    const [weatherHourly, setWeatherHourly] = useState<WeatherOneCallHourly[] | null | undefined>(undefined);
 
     const fetchWeatherHourly = () => {
 
-        const apiURL = `${getWeatherBaseUrl(city, appId)}&exclude=`
-            + `${WeatherOneCallPart.CURRENT},`
-            + `${WeatherOneCallPart.DAILY},`
+        const params = getWeatherUrlParams(city, appId);
+        params.append("exclude", `${WeatherOneCallPart.CURRENT},`
             + `${WeatherOneCallPart.MINUTELY},`
-            + WeatherOneCallPart.ALERTS;
+            + `${WeatherOneCallPart.DAILY},`
+            + WeatherOneCallPart.ALERTS
+        );
+        const apiURL = `${getWeatherBaseUrl()}/3.0/onecall?${params.toString()}`
 
         axios.get(apiURL)
             .then((response) => {
-
                 const weatherResponse = response.data as OpenWeatherMapOneCallResponse;
-
                 if (weatherResponse.hourly) {
-
                     setWeatherHourly(weatherResponse.hourly);
                 }
-            });
+            })
+            .catch((error) => {
+                console.log(error.response.status);
+                if (error.response.status === 401) {
+                    setWeatherHourly(null);  // Maybe missing the oneCall API subscription plan?
+                }
+            });;
     }
 
     /**
@@ -81,7 +87,6 @@ const WeatherTemperatureChart: React.FC<WeatherTemperatureChartProps> = (props) 
         weatherHourly.forEach((weatherHour, index) => {
 
             if (index > 23) {
-
                 return;
             }
 
@@ -109,8 +114,7 @@ const WeatherTemperatureChart: React.FC<WeatherTemperatureChartProps> = (props) 
 
     }, [weatherHourly]);
 
-    if (!dataPoints || _.isNil(minTemp) || _.isNil(maxTemp)) {
-
+    if (weatherHourly !== null && (!dataPoints || _.isNil(minTemp) || _.isNil(maxTemp))) {
         // TODO: ghost loading
         console.log("Loading temperature chart");
         return (<Box />);
@@ -120,52 +124,58 @@ const WeatherTemperatureChart: React.FC<WeatherTemperatureChartProps> = (props) 
 
         <Box width={1} marginBottom={4}>
 
-            <ResponsiveContainer width="100%" aspect={7.0 / 1.0}>
+            {weatherHourly
 
-                <LineChart
-                    data={dataPoints}
-                >
-                    <XAxis
-                        dataKey="time"
-                        domain={['auto', 'auto']}
-                        tickMargin={10}
-                        tick={{
-                            stroke: theme.palette.text.primary,
-                            strokeWidth: .3,
-                        }}
-                    />
+                ? <ResponsiveContainer width="100%" aspect={7.0 / 1.0}>
 
-                    <YAxis
-                        width={50}
-                        type="number"
-                        domain={[minTemp!, maxTemp!]}
-                        yAxisId="left"
-                        tickCount={10}
-                        interval="preserveStartEnd"
-                        allowDecimals={false}
-                        unit="°C"
-                        tick={{
-                            stroke: theme.palette.text.primary,
-                            strokeWidth: .3,
-                        }}
-                        tickMargin={8}
-                    />
+                    <LineChart
+                        data={dataPoints}
+                    >
+                        <XAxis
+                            dataKey="time"
+                            domain={['auto', 'auto']}
+                            tickMargin={10}
+                            tick={{
+                                stroke: theme.palette.text.primary,
+                                strokeWidth: .3,
+                            }}
+                        />
 
-                    <Line
-                        yAxisId="left"
-                        type="monotone"
-                        dataKey="temperature"
-                        stroke={theme.palette.secondary.main}
-                        strokeWidth={2}
-                        dot={false}
-                    />
+                        <YAxis
+                            width={50}
+                            type="number"
+                            domain={[minTemp!, maxTemp!]}
+                            yAxisId="left"
+                            tickCount={10}
+                            interval="preserveStartEnd"
+                            allowDecimals={false}
+                            unit="°C"
+                            tick={{
+                                stroke: theme.palette.text.primary,
+                                strokeWidth: .3,
+                            }}
+                            tickMargin={8}
+                        />
 
-                    <CartesianGrid stroke="#4d4d4d" strokeDasharray="5 5" />
+                        <Line
+                            yAxisId="left"
+                            type="monotone"
+                            dataKey="temperature"
+                            stroke={theme.palette.secondary.main}
+                            strokeWidth={2}
+                            dot={false}
+                        />
 
-                </LineChart>
+                        <CartesianGrid stroke="#4d4d4d" strokeDasharray="5 5" />
 
-            </ResponsiveContainer>
+                    </LineChart>
 
+                </ResponsiveContainer>
+
+                : <Typography variant="caption">
+                    You might need to subscribe to the oneCall API 3.0 to display this. <a href="https://openweathermap.org/api/one-call-3" target="_blank">Learn more.</a>
+                </Typography>
+            }
         </Box>
     );
 }

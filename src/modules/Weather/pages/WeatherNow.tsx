@@ -5,13 +5,14 @@ import WbSunnyIcon from '@mui/icons-material/WbSunny';
 import WindPowerIcon from '@mui/icons-material/WindPower';
 import { Alert, Box, Typography, useTheme } from "@mui/material";
 import axios from 'axios';
+import _ from 'lodash';
 import React, { useEffect, useState } from "react";
 import Loading from '../../../app/landing/Loading';
 import MissingInfo from '../../../app/landing/MissingInfo';
 import { ContentModuleType, MODULE_NAMES } from '../../../app/model/ContentModule';
 import { Credentials } from '../../../app/model/Credentials';
-import { getWeatherBaseUrl } from '../helpers/WeatherHelper';
-import { OpenWeatherMapOneCallResponse, WeatherCurrent, WeatherOneCallPart } from "../model/OpenWeatherMapModel";
+import { getWeatherBaseUrl, getWeatherUrlParams } from '../helpers/WeatherHelper';
+import { WeatherCurrentResponse } from '../model/OWMCurrentModels';
 import { City, WeatherExtendedSettings } from '../model/WeatherExtendedSettings';
 import WeatherRainBar from "./WeatherRainBar";
 import WeatherTemperatureChart from './WeatherTemperatureChart';
@@ -31,24 +32,15 @@ const WeatherNow: React.FC<WeatherNowProps> = (props) => {
      * Usage: show the current temperature, weather, wind, etc
      * Refresh interval: 1 hour
      */
-    const [weatherCurrent, setWeatherCurrent] = useState<WeatherCurrent>();
+    const [weatherCurrent, setWeatherCurrent] = useState<WeatherCurrentResponse>();
 
     const fetchWeatherCurrent = (city: City, appId: string) => {
-
-        const apiURL = `${getWeatherBaseUrl(city, appId)}&exclude=`
-            + `${WeatherOneCallPart.MINUTELY},`
-            + `${WeatherOneCallPart.HOURLY},`
-            + `${WeatherOneCallPart.DAILY},`
-            + WeatherOneCallPart.ALERTS;
-
+        const apiURL = `${getWeatherBaseUrl()}/2.5/weather?${getWeatherUrlParams(city, appId).toString()}`;
         axios.get(apiURL)
             .then((response) => {
-
-                const weatherResponse = response.data as OpenWeatherMapOneCallResponse;
-
-                if (weatherResponse.current) {
-
-                    setWeatherCurrent(weatherResponse.current);
+                const weatherResponse = response.data as WeatherCurrentResponse;
+                if (weatherResponse) {
+                    setWeatherCurrent(weatherResponse);
                 }
             });
     }
@@ -79,44 +71,30 @@ const WeatherNow: React.FC<WeatherNowProps> = (props) => {
 
     }, [moduleSettings, credentials]);
 
-    const getTemperatureText = (weatherCurrent: WeatherCurrent): string => {
-
-        if (weatherCurrent.temp_min && weatherCurrent.temp_max) {
-
-            return `${Math.round(weatherCurrent.temp_min)}°C - ${Math.round(weatherCurrent.temp_max)}°C`;
-        }
-        else if (weatherCurrent.temp) {
-
-            return `${Math.round(weatherCurrent.temp)}°C`;
+    const getTemperatureText = (weatherCurrent: WeatherCurrentResponse): string => {
+        if (weatherCurrent.main.temp) {
+            return `${Math.round(weatherCurrent.main.temp)}°C`;
         }
         else {
-
             return "";
         }
     }
 
     // TODO: one method for now and forecast
-    const getWeatherDescription = (weatherCurrent: WeatherCurrent): string => {
-
+    const getWeatherDescription = (weatherCurrent: WeatherCurrentResponse): string => {
         if (weatherCurrent.weather && weatherCurrent.weather.length > 0) {
-
             const desc: string = weatherCurrent.weather[0].description;
-
             return desc.charAt(0).toUpperCase() + desc.slice(1);
         }
         else {
-
             return "";
         }
     }
 
     // TODO: one method for now and forecast
-    const getWeatherImage = (weatherCurrent: WeatherCurrent) => {
-
+    const getWeatherImage = (weatherCurrent: WeatherCurrentResponse) => {
         if (weatherCurrent.weather && weatherCurrent.weather.length > 0) {
-
             return (
-
                 <img
                     src={`./weather_icons/${weatherCurrent.weather[0].icon}.png`}
                     height="100%"
@@ -127,10 +105,10 @@ const WeatherNow: React.FC<WeatherNowProps> = (props) => {
         }
     }
 
-    const getWindTextAndIcon = (weatherCurrent: WeatherCurrent) => {
+    const getWindTextAndIcon = (weatherCurrent: WeatherCurrentResponse) => {
 
-        const windSpeed: number = Math.round(weatherCurrent.wind_speed * 3.6);
-        const windGust: number | undefined = weatherCurrent.wind_gust ? Math.round(weatherCurrent.wind_gust * 3.6) : undefined;
+        const windSpeed: number = Math.round(weatherCurrent.wind.speed * 3.6);
+        const windGust: number | undefined = weatherCurrent.wind.gust ? Math.round(weatherCurrent.wind.gust * 3.6) : undefined;
 
         return (
 
@@ -140,7 +118,7 @@ const WeatherNow: React.FC<WeatherNowProps> = (props) => {
                     fontSize="large"
                     style={{
                         transition: "all 0.2s ease-in-out",
-                        transform: `rotate(${weatherCurrent.wind_deg + 180}deg)`,
+                        transform: `rotate(${weatherCurrent.wind.deg + 180}deg)`,
                         marginTop: theme.spacing(-1),
                     }}
                 />
@@ -175,17 +153,16 @@ const WeatherNow: React.FC<WeatherNowProps> = (props) => {
         );
     }
 
-    const getTempFeelsLikeCard = (weatherCurrent: WeatherCurrent) => {
+    const getTempFeelsLikeCard = (weatherCurrent: WeatherCurrentResponse) => {
 
         // Difference between the 2 (negative or positive)
-        const tempDifference = weatherCurrent.feels_like - weatherCurrent.temp;
+        const tempDifference = weatherCurrent.main.feels_like - weatherCurrent.main.temp;
 
+        // If the difference is less than 3°C, don't show the "feels like"
         if (
-            weatherCurrent.feels_like === undefined
-            // If the difference is less than 3°C, don't show the "feels like"
+            _.isNil(weatherCurrent.main.feels_like)
             || Math.abs(tempDifference) < 3
         ) {
-
             return;
         }
 
@@ -209,7 +186,7 @@ const WeatherNow: React.FC<WeatherNowProps> = (props) => {
                     }}
                 >
                     <Typography variant="body1">
-                        {`${Math.round(weatherCurrent.feels_like)}°C`}
+                        {`${Math.round(weatherCurrent.main.feels_like)}°C`}
                     </Typography>
                 </Alert>
             </Box>

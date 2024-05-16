@@ -7,8 +7,8 @@ import Loading from "../../../app/landing/Loading";
 import MissingInfo from "../../../app/landing/MissingInfo";
 import { ContentModuleType, MODULE_NAMES } from "../../../app/model/ContentModule";
 import { CARD_BACKGROUND_COLORMAP } from "../../../style/AppStyle";
-import { getWeatherBaseUrl } from "../helpers/WeatherHelper";
-import { OpenWeatherMapOneCallResponse, WeatherDaily, WeatherOneCallPart } from "../model/OpenWeatherMapModel";
+import { getWeatherBaseUrl, getWeatherUrlParams } from "../helpers/WeatherHelper";
+import { OpenWeatherMapOneCallResponse, WeatherOneCallDaily, WeatherOneCallPart } from '../model/OWMOneCallModels';
 import { City, WeatherExtendedSettings } from "../model/WeatherExtendedSettings";
 
 interface WeatherForecastProps {
@@ -26,24 +26,29 @@ const WeatherForecast: React.FC<WeatherForecastProps> = (props) => {
      * Usage: show the forecast for the next 8 days
      * Refresh interval: 3 hours
      */
-    const [weatherDaily, setWeatherDaily] = useState<WeatherDaily[]>();
+    const [weatherDaily, setWeatherDaily] = useState<WeatherOneCallDaily[] | null | undefined>(undefined);
 
     const fetchWeatherDaily = (city: City, appId: string) => {
 
-        const apiURL = `${getWeatherBaseUrl(city, appId)}&exclude=`
-            + `${WeatherOneCallPart.CURRENT},`
+        const params = getWeatherUrlParams(city, appId);
+        params.append("exclude", `${WeatherOneCallPart.CURRENT},`
             + `${WeatherOneCallPart.MINUTELY},`
             + `${WeatherOneCallPart.HOURLY},`
-            + WeatherOneCallPart.ALERTS;
+            + WeatherOneCallPart.ALERTS
+        );
+        const apiURL = `${getWeatherBaseUrl()}/3.0/onecall?${params.toString()}`;
 
         axios.get(apiURL)
             .then((response) => {
-
                 const weatherResponse = response.data as OpenWeatherMapOneCallResponse;
-
                 if (weatherResponse.daily) {
-
                     setWeatherDaily(weatherResponse.daily);
+                }
+            })
+            .catch((error) => {
+                console.log(error.response.status);
+                if (error.response.status === 401) {
+                    setWeatherDaily(null);  // Maybe missing the oneCall API subscription plan?
                 }
             });
     }
@@ -71,29 +76,23 @@ const WeatherForecast: React.FC<WeatherForecastProps> = (props) => {
         return () => { clearInterval(intervalDaily) }
     }, []);
 
-    const getDayTemperatures = (weatherDay: WeatherDaily): string => {
+    const getDayTemperatures = (weatherDay: WeatherOneCallDaily): string => {
 
         if (weatherDay.temp.min && weatherDay.temp.max) {
-
             return `${Math.round(weatherDay.temp.min)}°C - ${Math.round(weatherDay.temp.max)}°C`;
         }
         else if (weatherDay.temp) {
-
             return `${Math.round(weatherDay.temp.day)}°C`;
         }
         else {
-
             return "";
         }
     }
 
     // TODO: one method for now and forecast
-    const getWeatherImage = (weatherDay: WeatherDaily) => {
-
+    const getWeatherImage = (weatherDay: WeatherOneCallDaily) => {
         if (weatherDay.weather && weatherDay.weather.length > 0) {
-
             return (
-
                 <img
                     src={`./weather_icons/${weatherDay.weather[0].icon}.png`}
                     width="130rem"
@@ -105,33 +104,27 @@ const WeatherForecast: React.FC<WeatherForecastProps> = (props) => {
     }
 
     // TODO: one method for now and forecast
-    const getWeatherDescription = (weatherDay: WeatherDaily): string => {
-
+    const getWeatherDescription = (weatherDay: WeatherOneCallDaily): string => {
         if (weatherDay.weather && weatherDay.weather.length > 0) {
-
             const desc: string = weatherDay.weather[0].description;
-
             return desc.charAt(0).toUpperCase() + desc.slice(1);
         }
         else {
-
             return "";
         }
     }
 
     const renderWeatherForecastCard = (
-        weatherDay: WeatherDaily,
+        weatherDay: WeatherOneCallDaily,
         index: number,
         line: number,
     ) => {
 
         if (line === 0 && index >= 4) {
-
             return (<Box key={index} />);
         }
 
         if (line === 1 && (index < 4 || index >= 8)) {
-
             return (<Box key={index} />);
         }
 
@@ -201,8 +194,7 @@ const WeatherForecast: React.FC<WeatherForecastProps> = (props) => {
         return (<MissingInfo pageName={MODULE_NAMES[ContentModuleType.WEATHER_FORECAST]} />);
     }
 
-    if (!weatherDaily) {
-
+    if (weatherDaily === undefined) {
         return (<Loading pageName="Weather forecast" />)
     }
 
@@ -215,41 +207,43 @@ const WeatherForecast: React.FC<WeatherForecastProps> = (props) => {
             width={1}
             height={1}
         >
+            {weatherDaily
 
-            <Box
-                display="flex"
-                flexDirection="column"
-                maxHeight={.9}
-            >
-
-                <Box
+                ? <Box
                     display="flex"
-                    alignItems="center"
-                    marginLeft={3}
-                    marginBottom={2}
+                    flexDirection="column"
+                    maxHeight={.9}
                 >
-                    <MyLocationIcon fontSize="large" />
+                    <Box
+                        display="flex"
+                        alignItems="center"
+                        marginLeft={3}
+                        marginBottom={2}
+                    >
+                        <MyLocationIcon fontSize="large" />
 
-                    <Typography variant="h4" marginLeft={2}>
-                        {moduleSettings.city.name}
-                    </Typography>
+                        <Typography variant="h4" marginLeft={2}>
+                            {moduleSettings.city.name}
+                        </Typography>
+                    </Box>
+
+                    <Box display="flex">
+                        {weatherDaily.map((weatherDay, index) => {
+                            return renderWeatherForecastCard(weatherDay, index, 0)
+                        })}
+                    </Box>
+
+                    <Box display="flex">
+                        {weatherDaily.map((weatherDay, index) => {
+                            return renderWeatherForecastCard(weatherDay, index, 1)
+                        })}
+                    </Box>
+
                 </Box>
-
-                <Box display="flex">
-                    {weatherDaily.map((weatherDaily, index) => {
-
-                        return renderWeatherForecastCard(weatherDaily, index, 0)
-                    })}
-                </Box>
-
-                <Box display="flex">
-                    {weatherDaily.map((weatherDaily, index) => {
-
-                        return renderWeatherForecastCard(weatherDaily, index, 1)
-                    })}
-                </Box>
-
-            </Box>
+                : <Typography>
+                    You might need to subscribe to the oneCall API 3.0 to display this. <a href="https://openweathermap.org/api/one-call-3" target="_blank">Learn more.</a>
+                </Typography>
+            }
         </Box >
     );
 }

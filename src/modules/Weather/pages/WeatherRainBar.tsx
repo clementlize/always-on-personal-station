@@ -3,8 +3,8 @@ import axios from "axios";
 import interpolate from "color-interpolate";
 import moment from "moment";
 import { useEffect, useState } from "react";
-import { getWeatherBaseUrl } from "../helpers/WeatherHelper";
-import { OpenWeatherMapOneCallResponse, WeatherMinutely, WeatherOneCallPart } from "../model/OpenWeatherMapModel";
+import { getWeatherBaseUrl, getWeatherUrlParams } from "../helpers/WeatherHelper";
+import { OpenWeatherMapOneCallResponse, WeatherOneCallMinutely, WeatherOneCallPart } from "../model/OWMOneCallModels";
 import { City } from "../model/WeatherExtendedSettings";
 
 interface WeatherRainBarProps {
@@ -26,15 +26,17 @@ const WeatherRainBar: React.FC<WeatherRainBarProps> = (props) => {
      * Usage: show the rain in the next hour
      * Refresh interval: 5 minutes
      */
-    const [weatherMinutely, setWeatherMinutely] = useState<WeatherMinutely[]>();
+    const [weatherMinutely, setWeatherMinutely] = useState<WeatherOneCallMinutely[] | undefined | null>(undefined);
 
     const fetchWeatherMinutely = () => {
 
-        const apiURL = `${getWeatherBaseUrl(city, appId)}&exclude=`
-            + `${WeatherOneCallPart.CURRENT},`
+        const params = getWeatherUrlParams(city, appId);
+        params.append("exclude", `${WeatherOneCallPart.CURRENT},`
             + `${WeatherOneCallPart.HOURLY},`
             + `${WeatherOneCallPart.DAILY},`
-            + WeatherOneCallPart.ALERTS;
+            + WeatherOneCallPart.ALERTS
+        );
+        const apiURL = `${getWeatherBaseUrl()}/3.0/onecall?${params.toString()}`
 
         axios.get(apiURL)
             .then((response) => {
@@ -42,7 +44,13 @@ const WeatherRainBar: React.FC<WeatherRainBarProps> = (props) => {
                 if (weatherResponse.minutely) {
                     setWeatherMinutely(weatherResponse.minutely);
                 }
-            });
+            })
+            .catch((error) => {
+                console.log(error.response.status);
+                if (error.response.status === 401) {
+                    setWeatherMinutely(null);  // Maybe missing the oneCall API subscription plan?
+                }
+            });;
     }
 
     /**
@@ -64,21 +72,17 @@ const WeatherRainBar: React.FC<WeatherRainBarProps> = (props) => {
      * @param weatherMinute 
      * @returns 
      */
-    const getWeatherRainMinuteCoefficient = (weatherMinute: WeatherMinutely): number => {
-
+    const getWeatherRainMinuteCoefficient = (weatherMinute: WeatherOneCallMinutely): number => {
         if (!weatherMinute.precipitation) {
             return 0;
         }
-
         if (weatherMinute.precipitation > HEAVIEST_RAIN_MM_PER_MINUTE) {
             return 1;
         }
-
         return weatherMinute.precipitation / HEAVIEST_RAIN_MM_PER_MINUTE;
     }
 
-    if (!weatherMinutely) {
-
+    if (weatherMinutely === undefined) {
         // TODO: ghost loading
         return (<Box />);
     }
@@ -100,41 +104,49 @@ const WeatherRainBar: React.FC<WeatherRainBarProps> = (props) => {
                 overflow="hidden"
             >
 
-                {weatherMinutely.map((weatherMinute, index) => {
+                {weatherMinutely
 
-                    const colorMap = interpolate([RAIN_COLOR_NONE, RAIN_COLOR_MIDDLE, RAIN_COLOR_HEAVY]);
+                    ? weatherMinutely.map((weatherMinute, index) => {
 
-                    return (
-                        <Box
-                            key={index}
-                            height={1}
-                            flexGrow={1}
-                            bgcolor={colorMap(getWeatherRainMinuteCoefficient(weatherMinute))}
-                        >
-                        </Box>
-                    )
-                })}
+                        const colorMap = interpolate([RAIN_COLOR_NONE, RAIN_COLOR_MIDDLE, RAIN_COLOR_HEAVY]);
 
-            </Box>
+                        return (
+                            <Box
+                                key={index}
+                                height={1}
+                                flexGrow={1}
+                                bgcolor={colorMap(getWeatherRainMinuteCoefficient(weatherMinute))}
+                            >
+                            </Box>
+                        )
+                    })
 
-            <Box
-                width={1}
-                display="flex"
-                justifyContent="space-between"
-                marginTop={1}
-            >
-
-                <Typography>
-                    {moment.unix(weatherMinutely[0].dt).format("HH:mm")}
-                </Typography>
-
-                <Typography>+15 min</Typography>
-                <Typography>+30 min</Typography>
-                <Typography>+45 min</Typography>
-                <Typography>+60 min</Typography>
+                    : <Typography variant="caption">
+                        You may need to subscribe to the oneCall API 3.0 to display this. <a href="https://openweathermap.org/api/one-call-3" target="_blank">Learn more.</a>
+                    </Typography>
+                }
 
             </Box>
 
+            {weatherMinutely &&
+                <Box
+                    width={1}
+                    display="flex"
+                    justifyContent="space-between"
+                    marginTop={1}
+                >
+
+                    <Typography>
+                        {moment.unix(weatherMinutely[0].dt).format("HH:mm")}
+                    </Typography>
+
+                    <Typography>+15 min</Typography>
+                    <Typography>+30 min</Typography>
+                    <Typography>+45 min</Typography>
+                    <Typography>+60 min</Typography>
+
+                </Box>
+            }
         </Box>
     );
 }

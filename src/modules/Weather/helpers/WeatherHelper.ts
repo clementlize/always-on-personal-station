@@ -1,11 +1,15 @@
 import { City } from "../model/WeatherExtendedSettings";
 
-export const getWeatherBaseUrl = (city: City, appId: string) => {
+export const getWeatherBaseUrl = () => {
+    return "https://api.openweathermap.org/data";
+}
 
-    return "https://api.openweathermap.org/data/2.5/onecall?"
-        + `appid=${appId}&`
-        + `lat=${city.lat}&`
-        + `lon=${city.lon}&`
-        + `lang=en&`
-        + `units=metric`;
-} 
+export const getWeatherUrlParams = (city: City, appId: string) => {
+    const searchParams = new URLSearchParams();
+    searchParams.append("appid", appId);
+    searchParams.append("lat", city.lat.toString());
+    searchParams.append("lon", city.lon.toString());
+    searchParams.append("lang", "en");
+    searchParams.append("units", "metric");
+    return searchParams;
+}
