@@ -14,8 +14,8 @@ import { Credentials } from '../../../app/model/Credentials';
 import { getWeatherBaseUrl, getWeatherUrlParams } from '../helpers/WeatherHelper';
 import { WeatherCurrentResponse } from '../model/OWMCurrentModels';
 import { City, WeatherExtendedSettings } from '../model/WeatherExtendedSettings';
+import WeatherChart from './WeatherChart';
 import WeatherRainBar from "./WeatherRainBar";
-import WeatherTemperatureChart from './WeatherTemperatureChart';
 
 interface WeatherNowProps {
     moduleSettings: WeatherExtendedSettings | undefined;
@@ -266,7 +266,7 @@ const WeatherNow: React.FC<WeatherNowProps> = (props) => {
 
                 </Box>
 
-                <WeatherTemperatureChart
+                <WeatherChart
                     city={moduleSettings.city}
                     appId={credentials.openweathermap_app_id}
                 />

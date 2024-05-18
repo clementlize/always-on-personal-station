@@ -3,7 +3,7 @@ import axios from "axios";
 import interpolate from "color-interpolate";
 import moment from "moment";
 import { useEffect, useState } from "react";
-import { getWeatherBaseUrl, getWeatherUrlParams } from "../helpers/WeatherHelper";
+import { getWeatherBaseUrl, getWeatherRainMinuteCoefficient, getWeatherUrlParams } from "../helpers/WeatherHelper";
 import { OpenWeatherMapOneCallResponse, WeatherOneCallMinutely, WeatherOneCallPart } from "../model/OWMOneCallModels";
 import { City } from "../model/WeatherExtendedSettings";
 
@@ -13,7 +13,6 @@ interface WeatherRainBarProps {
 }
 
 // Based on this article http://pluiesextremes.meteo.fr/france-metropole/Intensite-de-precipitations.html
-const HEAVIEST_RAIN_MM_PER_MINUTE = 7; // mm per hour
 const RAIN_COLOR_NONE = "#ffffff00";
 const RAIN_COLOR_MIDDLE = "#a7b9fdc7";
 const RAIN_COLOR_HEAVY = "#2c45b3";
@@ -67,21 +66,6 @@ const WeatherRainBar: React.FC<WeatherRainBarProps> = (props) => {
         return () => { clearInterval(intervalMinutely) }
     }, []);
 
-    /**
-     * Get a coefficient (0 to 1) of how heavy the rain is.
-     * @param weatherMinute 
-     * @returns 
-     */
-    const getWeatherRainMinuteCoefficient = (weatherMinute: WeatherOneCallMinutely): number => {
-        if (!weatherMinute.precipitation) {
-            return 0;
-        }
-        if (weatherMinute.precipitation > HEAVIEST_RAIN_MM_PER_MINUTE) {
-            return 1;
-        }
-        return weatherMinute.precipitation / HEAVIEST_RAIN_MM_PER_MINUTE;
-    }
-
     if (weatherMinutely === undefined) {
         // TODO: ghost loading
         return (<Box />);
@@ -115,7 +99,7 @@ const WeatherRainBar: React.FC<WeatherRainBarProps> = (props) => {
                                 key={index}
                                 height={1}
                                 flexGrow={1}
-                                bgcolor={colorMap(getWeatherRainMinuteCoefficient(weatherMinute))}
+                                bgcolor={colorMap(getWeatherRainMinuteCoefficient(weatherMinute.precipitation))}
                             >
                             </Box>
                         )

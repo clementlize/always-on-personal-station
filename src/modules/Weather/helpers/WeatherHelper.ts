@@ -13,3 +13,20 @@ export const getWeatherUrlParams = (city: City, appId: string) => {
     searchParams.append("units", "metric");
     return searchParams;
 }
+
+export const HEAVIEST_RAIN_MM_PER_MINUTE = 7; // mm per hour
+
+/**
+ * Get a coefficient (0 to 1) of how heavy the rain is.
+ * @param precipitation
+ * @returns 
+ */
+export const getWeatherRainMinuteCoefficient = (precipitation: number): number => {
+    if (!precipitation) {
+        return 0;
+    }
+    if (precipitation > HEAVIEST_RAIN_MM_PER_MINUTE) {
+        return 1;
+    }
+    return precipitation / HEAVIEST_RAIN_MM_PER_MINUTE;
+}
