@@ -19,10 +19,23 @@ const MissingInfo: React.FC<MissingInfoProps> = (props) => {
 
             <Box
                 maxWidth="70%"
+                display="flex"
+                flexDirection="column"
+                alignItems="center"
+                justifyContent="center"
+                textAlign="center"
             >
 
-                <Typography variant="h6">
-                    {`Missing information to display the page "${pageName}". Please go to the settings page and fill in the missing information.`}
+                <Typography
+                    variant="h2"
+                >
+                    Missing information
+                </Typography>
+
+                <Typography
+                    marginTop={2}
+                >
+                    {`Cannot display "${pageName}". Please go to the settings page and fill in the missing information.`}
                 </Typography>
 
             </Box>

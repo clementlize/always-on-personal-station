@@ -9,8 +9,9 @@ import _ from 'lodash';
 import React, { useEffect, useState } from "react";
 import Loading from '../../../app/landing/Loading';
 import MissingInfo from '../../../app/landing/MissingInfo';
+import ModuleError from '../../../app/landing/ModuleError';
 import { ContentModuleType, MODULE_NAMES } from '../../../app/model/ContentModule';
-import { Credentials } from '../../../app/model/Credentials';
+import { CredentialName } from '../../../app/model/Credentials';
 import { getWeatherBaseUrl, getWeatherUrlParams } from '../helpers/WeatherHelper';
 import { WeatherCurrentResponse } from '../model/OWMCurrentModels';
 import { City, WeatherExtendedSettings } from '../model/WeatherExtendedSettings';
@@ -32,7 +33,7 @@ const WeatherNow: React.FC<WeatherNowProps> = (props) => {
      * Usage: show the current temperature, weather, wind, etc
      * Refresh interval: 1 hour
      */
-    const [weatherCurrent, setWeatherCurrent] = useState<WeatherCurrentResponse>();
+    const [weatherCurrent, setWeatherCurrent] = useState<WeatherCurrentResponse | null | undefined>(undefined);
 
     const fetchWeatherCurrent = (city: City, appId: string) => {
         const apiURL = `${getWeatherBaseUrl()}/2.5/weather?${getWeatherUrlParams(city, appId).toString()}`;
@@ -42,6 +43,10 @@ const WeatherNow: React.FC<WeatherNowProps> = (props) => {
                 if (weatherResponse) {
                     setWeatherCurrent(weatherResponse);
                 }
+            })
+            .catch((error) => {
+                console.log(error.response.status);
+                setWeatherCurrent(null);
             });
     }
 
@@ -60,11 +65,11 @@ const WeatherNow: React.FC<WeatherNowProps> = (props) => {
         }
 
         // First, fetch all the data
-        fetchWeatherCurrent(moduleSettings.city, credentials![Credentials.OPENWEATHERMAP_APP_ID]);
+        fetchWeatherCurrent(moduleSettings.city, credentials![CredentialName.OPENWEATHERMAP_APP_ID]);
 
         // Set the interval
         const intervalCurrent = setInterval(() => {
-            fetchWeatherCurrent(moduleSettings.city!, credentials![Credentials.OPENWEATHERMAP_APP_ID])
+            fetchWeatherCurrent(moduleSettings.city!, credentials![CredentialName.OPENWEATHERMAP_APP_ID])
         }, 1000 * 60 * 60 * 1);  // 1 hour
 
         return () => { clearInterval(intervalCurrent) }
@@ -202,8 +207,12 @@ const WeatherNow: React.FC<WeatherNowProps> = (props) => {
         return (<MissingInfo pageName={MODULE_NAMES[ContentModuleType.WEATHER_NOW]} />);
     }
 
-    if (!weatherCurrent) {
+    if (weatherCurrent === undefined) {
         return (<Loading pageName={MODULE_NAMES[ContentModuleType.WEATHER_NOW]} />);
+    }
+
+    if (weatherCurrent === null) {
+        return (<ModuleError pageName={MODULE_NAMES[ContentModuleType.WEATHER_NOW]} />);
     }
 
     return (

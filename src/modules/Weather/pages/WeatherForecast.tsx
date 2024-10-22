@@ -5,6 +5,7 @@ import moment from "moment";
 import React, { useEffect, useState } from "react";
 import Loading from "../../../app/landing/Loading";
 import MissingInfo from "../../../app/landing/MissingInfo";
+import ModuleError from '../../../app/landing/ModuleError';
 import { ContentModuleType, MODULE_NAMES } from "../../../app/model/ContentModule";
 import { CARD_BACKGROUND_COLORMAP } from "../../../style/AppStyle";
 import { getWeatherBaseUrl, getWeatherUrlParams } from "../helpers/WeatherHelper";
@@ -47,9 +48,7 @@ const WeatherForecast: React.FC<WeatherForecastProps> = (props) => {
             })
             .catch((error) => {
                 console.log(error.response.status);
-                if (error.response.status === 401) {
-                    setWeatherDaily(null);  // Maybe missing the oneCall API subscription plan?
-                }
+                setWeatherDaily(null);
             });
     }
 
@@ -196,6 +195,10 @@ const WeatherForecast: React.FC<WeatherForecastProps> = (props) => {
 
     if (weatherDaily === undefined) {
         return (<Loading pageName="Weather forecast" />)
+    }
+
+    if (weatherDaily === null) {
+        return (<ModuleError pageName="Weather forecast" />)
     }
 
     return (

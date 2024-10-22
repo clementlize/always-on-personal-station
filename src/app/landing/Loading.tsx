@@ -23,7 +23,7 @@ const Loading: React.FC<LoadingProps> = (props) => {
                 variant={notFullPage ? "h5" : "h2"}
                 marginBottom={notFullPage ? 0 : 2}
             >
-                {`${pageName} is loading`}
+                {`"${pageName}" is loading`}
             </Typography>
 
             <CircularProgress />
