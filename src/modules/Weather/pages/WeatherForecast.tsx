@@ -47,7 +47,7 @@ const WeatherForecast: React.FC<WeatherForecastProps> = (props) => {
                 }
             })
             .catch((error) => {
-                console.log(error.response.status);
+                console.error(error);
                 setWeatherDaily(null);
             });
     }
@@ -73,7 +73,7 @@ const WeatherForecast: React.FC<WeatherForecastProps> = (props) => {
         const intervalDaily = setInterval(() => fetchWeatherDaily(moduleSettings.city!, credentials.openweathermap_app_id), 1000 * 60 * 60 * 3);  // 3 hours
 
         return () => { clearInterval(intervalDaily) }
-    }, []);
+    }, [moduleSettings, credentials]);
 
     const getDayTemperatures = (weatherDay: WeatherOneCallDaily): string => {
 
@@ -210,43 +210,37 @@ const WeatherForecast: React.FC<WeatherForecastProps> = (props) => {
             width={1}
             height={1}
         >
-            {weatherDaily
-
-                ? <Box
+            <Box
+                display="flex"
+                flexDirection="column"
+                maxHeight={.9}
+            >
+                <Box
                     display="flex"
-                    flexDirection="column"
-                    maxHeight={.9}
+                    alignItems="center"
+                    marginLeft={3}
+                    marginBottom={2}
                 >
-                    <Box
-                        display="flex"
-                        alignItems="center"
-                        marginLeft={3}
-                        marginBottom={2}
-                    >
-                        <MyLocationIcon fontSize="large" />
+                    <MyLocationIcon fontSize="large" />
 
-                        <Typography variant="h4" marginLeft={2}>
-                            {moduleSettings.city.name}
-                        </Typography>
-                    </Box>
-
-                    <Box display="flex">
-                        {weatherDaily.map((weatherDay, index) => {
-                            return renderWeatherForecastCard(weatherDay, index, 0)
-                        })}
-                    </Box>
-
-                    <Box display="flex">
-                        {weatherDaily.map((weatherDay, index) => {
-                            return renderWeatherForecastCard(weatherDay, index, 1)
-                        })}
-                    </Box>
-
+                    <Typography variant="h4" marginLeft={2}>
+                        {moduleSettings.city.name}
+                    </Typography>
                 </Box>
-                : <Typography>
-                    You might need to subscribe to the oneCall API 3.0 to display this. <a href="https://openweathermap.org/api/one-call-3" target="_blank">Learn more.</a>
-                </Typography>
-            }
+
+                <Box display="flex">
+                    {weatherDaily.map((weatherDay, index) => {
+                        return renderWeatherForecastCard(weatherDay, index, 0)
+                    })}
+                </Box>
+
+                <Box display="flex">
+                    {weatherDaily.map((weatherDay, index) => {
+                        return renderWeatherForecastCard(weatherDay, index, 1)
+                    })}
+                </Box>
+
+            </Box>
         </Box >
     );
 }

@@ -45,7 +45,7 @@ const WeatherNow: React.FC<WeatherNowProps> = (props) => {
                 }
             })
             .catch((error) => {
-                console.log(error.response.status);
+                console.error(error);
                 setWeatherCurrent(null);
             });
     }
