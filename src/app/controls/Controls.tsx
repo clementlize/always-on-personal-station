@@ -1,4 +1,5 @@
 import { useState } from "react";
+import OpenWeatherMapMigrationAlert from "../misc/OpenWeatherMapMigrationAlert";
 import { ModuleRefs } from "../model/ContentModule";
 import { UserData } from "../model/UserData";
 import ProgressBars from "../progressBar/ProgressBar";
@@ -89,6 +90,11 @@ const Controls: React.FC<ControlsProps> = (props) => {
                 />
             }
 
+            <OpenWeatherMapMigrationAlert
+                userData={userData}
+                setUserData={setUserData}
+                setLockScroll={setLockScroll}
+            />
         </>
     )
 }

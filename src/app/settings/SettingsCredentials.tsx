@@ -1,6 +1,6 @@
 import { Box, TextField, Typography, useTheme } from "@mui/material";
 import _ from "lodash";
-import { Credentials, CREDENTIALS_NAMES } from "../model/Credentials";
+import { CredentialName, CREDENTIALS_FORMATTED_NAMES } from "../model/Credentials";
 import { UserData } from "../model/UserData";
 import { getRequiredCredentialsList } from "../utils/AppUtils";
 
@@ -16,9 +16,13 @@ const SettingsCredentials: React.FC<SettingsCredentialsProps> = (props) => {
     const theme = useTheme();
 
     const requiredCredentialsList = getRequiredCredentialsList(userData.modules);
-    const remainingCredentialsList = Object.values(Credentials).filter((credential) => !requiredCredentialsList.includes(credential));
+    const remainingCredentialsList = Object.values(CredentialName).filter((credentialName) =>
+        !requiredCredentialsList.find((credentialListItem) =>
+            credentialListItem.name === credentialName
+        )
+    );
 
-    const updateCredentials = (credentials: Credentials, value: string) => {
+    const updateCredentials = (credentials: CredentialName, value: string) => {
 
         const newUserData = _.cloneDeep(userData);
 
@@ -47,15 +51,29 @@ const SettingsCredentials: React.FC<SettingsCredentialsProps> = (props) => {
                 >
                     <Typography>Required for you enabled modules</Typography>
 
-                    {requiredCredentialsList.map((credentials) => (
+                    {requiredCredentialsList.map((credentialListItem) => (
 
-                        <TextField
-                            label={CREDENTIALS_NAMES[credentials]}
-                            sx={{ marginTop: 2 }}
-                            value={userData.credentials?.[credentials] ?? ""}
-                            onChange={(e) => updateCredentials(credentials, e.target.value)}
-                            fullWidth
-                        />
+                        <Box
+                            display="flex"
+                            flexDirection="column"
+                        >
+                            <TextField
+                                label={CREDENTIALS_FORMATTED_NAMES[credentialListItem.name]}
+                                sx={{ marginTop: 2 }}
+                                value={userData.credentials?.[credentialListItem.name] ?? ""}
+                                onChange={(e) => updateCredentials(credentialListItem.name, e.target.value)}
+                                fullWidth
+                            />
+
+                            {Boolean(credentialListItem.specificChildren) &&
+                                <Box
+                                    marginTop={1}
+                                    paddingX={2}
+                                >
+                                    {credentialListItem.specificChildren}
+                                </Box>
+                            }
+                        </Box>
                     ))}
                 </Box>
             }
@@ -74,7 +92,7 @@ const SettingsCredentials: React.FC<SettingsCredentialsProps> = (props) => {
                     {remainingCredentialsList.map((credentials) => (
 
                         <TextField
-                            label={CREDENTIALS_NAMES[credentials]}
+                            label={CREDENTIALS_FORMATTED_NAMES[credentials]}
                             sx={{ marginTop: 2 }}
                             value={userData.credentials?.[credentials] ?? ""}
                             onChange={(e) => updateCredentials(credentials, e.target.value)}
