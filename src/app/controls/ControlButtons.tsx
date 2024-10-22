@@ -36,6 +36,7 @@ const ControlButtons: React.FC<ControlButtonsProps> = (props) => {
             padding={3}
             display="flex"
             flexDirection="column"
+            zIndex={1000}
         >
 
             <Button

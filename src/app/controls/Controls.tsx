@@ -66,7 +66,6 @@ const Controls: React.FC<ControlsProps> = (props) => {
     return (
 
         <>
-
             <ProgressBars
                 modules={userData.modules}
                 moduleRefs={moduleRefs}
