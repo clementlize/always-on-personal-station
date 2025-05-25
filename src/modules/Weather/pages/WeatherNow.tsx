@@ -77,7 +77,7 @@ const WeatherNow: React.FC<WeatherNowProps> = (props) => {
     }, [moduleSettings, credentials]);
 
     const getTemperatureText = (weatherCurrent: WeatherCurrentResponse): string => {
-        if (weatherCurrent.main.temp) {
+        if (!_.isNil(weatherCurrent.main.temp)) {
             return `${Math.round(weatherCurrent.main.temp)}°C`;
         }
         else {
