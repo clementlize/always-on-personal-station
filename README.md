@@ -41,9 +41,8 @@ All the data you set (location, API keys, ...) is stored locally in your browser
 You can use your own local version of the app. For this, you need a Node.JS development environment.
 
 - Clone the project in a dedicated directory on your computer
-- [Install yarn](https://classic.yarnpkg.com/lang/en/docs/install/) (if not already installed)
-- Run `yarn` to install packages
-- Run `yarn start` to start the project. It will open a tab in your browser. If not, browse `http://localhost:3000` to see the app.
+- Run `npm i` to install packages
+- Run `npm run start` to start the project. It will open a tab in your browser. If not, browse `http://localhost:3000` to see the app.
 
 This app is made using React. To learn React, check out the [React documentation](https://reactjs.org/). 
 
@@ -51,20 +50,16 @@ This app is made using React. To learn React, check out the [React documentation
 
  - [ ] Make the app more responsive, especially the analog clock
  - [ ] Create a favicon
- - [ ] Insert a location selector to avoid filling the coordinates (Weather)
  - [ ] More than one module instance (manage Refs automatically)
  - [ ] Create an onboarding process, showing tips and how to setup modules
  - [ ] Manage translations
 
-## In development
+ ## New module ideas
 
  - [ ] Agenda: show upcoming events from Google Calendar
  - [ ] Agenda: show a timetable (useful for students for example)
  - [ ] Shared bikes: show the number of available bikes/slots in a station
  - [ ] Raw data: display a chart with multiple data sources
-
- ## Current ideas
-
  - [ ] Music controler: show the currently playing music, and control it from the app
 
 ## Contribute
