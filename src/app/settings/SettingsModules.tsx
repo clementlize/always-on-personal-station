@@ -5,6 +5,7 @@ import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import { Box, Button, IconButton, Switch, TextField, Typography } from "@mui/material";
 import _ from "lodash";
 import { useState } from 'react';
+import { WeatherExtendedSettings } from '../../modules/Weather/model/WeatherExtendedSettings';
 import WeatherSettings from "../../modules/Weather/pages/WeatherSettings";
 import { DEFAULT_DISPLAY_TIME } from "../Defaults";
 import { ContentModule, ContentModuleType, MODULE_NAMES } from "../model/ContentModule";
@@ -117,7 +118,9 @@ const SettingsModules: React.FC<SettingsModulesProps> = (props) => {
                     <Box marginTop={2}>
                         <WeatherSettings
                             moduleSettings={module.extended_settings}
-                            setModuleSettings={(newSettings: any) => setModuleSettings(module, newSettings)}
+                            setModuleSettings={(newSettings: WeatherExtendedSettings) =>
+                                setModuleSettings(module, newSettings)
+                            }
                         />
                     </Box>
                 );

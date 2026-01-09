@@ -1,3 +1,4 @@
+// TODO: generic type
 export interface ContentModule {
 
     type: ContentModuleType;

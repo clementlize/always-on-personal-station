@@ -12,7 +12,7 @@ import MissingInfo from '../../../app/landing/MissingInfo';
 import ModuleError from '../../../app/landing/ModuleError';
 import { ContentModuleType, MODULE_NAMES } from '../../../app/model/ContentModule';
 import { CredentialName } from '../../../app/model/Credentials';
-import { getWeatherBaseUrl, getWeatherUrlParams } from '../helpers/WeatherHelper';
+import { getWeatherBaseUrl, getWeatherUrlParams, inKmH } from '../helpers/WeatherHelper';
 import { WeatherCurrentResponse } from '../model/OWMCurrentModels';
 import { City, WeatherExtendedSettings } from '../model/WeatherExtendedSettings';
 import WeatherChart from './WeatherChart';
@@ -112,8 +112,8 @@ const WeatherNow: React.FC<WeatherNowProps> = (props) => {
 
     const getWindTextAndIcon = (weatherCurrent: WeatherCurrentResponse) => {
 
-        const windSpeed: number = Math.round(weatherCurrent.wind.speed * 3.6);
-        const windGust: number | undefined = weatherCurrent.wind.gust ? Math.round(weatherCurrent.wind.gust * 3.6) : undefined;
+        const windSpeed: number = Math.round(inKmH(weatherCurrent.wind.speed));
+        const windGust: number | undefined = weatherCurrent.wind.gust ? Math.round(inKmH(weatherCurrent.wind.gust)) : undefined;
 
         return (
 
@@ -276,7 +276,7 @@ const WeatherNow: React.FC<WeatherNowProps> = (props) => {
                 </Box>
 
                 <WeatherChart
-                    city={moduleSettings.city}
+                    settings={moduleSettings}
                     appId={credentials.openweathermap_app_id}
                 />
                 <WeatherRainBar

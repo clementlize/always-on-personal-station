@@ -30,3 +30,7 @@ export const getWeatherRainMinuteCoefficient = (precipitation: number): number =
     }
     return precipitation / HEAVIEST_RAIN_MM_PER_MINUTE;
 }
+
+export const inKmH = (metersPerSecond: number): number => {
+    return metersPerSecond * 3.6;
+}

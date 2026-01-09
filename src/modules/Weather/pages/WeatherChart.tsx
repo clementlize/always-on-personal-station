@@ -1,25 +1,25 @@
 import { Box, Typography } from "@mui/material";
+import { red } from "@mui/material/colors";
 import indigo from "@mui/material/colors/indigo";
 import { useTheme } from "@mui/system";
 import axios from "axios";
 import _ from "lodash";
 import moment from "moment";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, XAxis, YAxis } from "recharts";
-import { getWeatherBaseUrl, getWeatherRainMinuteCoefficient, getWeatherUrlParams } from "../helpers/WeatherHelper";
+import { getWeatherBaseUrl, getWeatherRainMinuteCoefficient, getWeatherUrlParams, inKmH } from "../helpers/WeatherHelper";
 import { OpenWeatherMapOneCallResponse, WeatherOneCallHourly, WeatherOneCallPart } from "../model/OWMOneCallModels";
 import { WeatherChartPoint } from "../model/WeatherChartModel";
-import { City } from "../model/WeatherExtendedSettings";
+import { TemperatureType, WeatherExtendedSettings, WindType } from "../model/WeatherExtendedSettings";
 
 interface WeatherChartProps {
-    city: City;
+    settings: WeatherExtendedSettings;
     appId: string;
 }
 
-// TODO: add rain to this chart
 const WeatherChart: React.FC<WeatherChartProps> = (props) => {
 
-    const { city, appId } = props;
+    const { settings, appId } = props;
 
     const theme = useTheme();
 
@@ -33,9 +33,9 @@ const WeatherChart: React.FC<WeatherChartProps> = (props) => {
      */
     const [weatherHourly, setWeatherHourly] = useState<WeatherOneCallHourly[] | null | undefined>(undefined);
 
-    const fetchWeatherHourly = () => {
+    const fetchWeatherHourly = useCallback(() => {
 
-        const params = getWeatherUrlParams(city, appId);
+        const params = getWeatherUrlParams(settings.city, appId);
         params.append("exclude", `${WeatherOneCallPart.CURRENT},`
             + `${WeatherOneCallPart.MINUTELY},`
             + `${WeatherOneCallPart.DAILY},`
@@ -56,7 +56,7 @@ const WeatherChart: React.FC<WeatherChartProps> = (props) => {
                     setWeatherHourly(null);  // Maybe missing the oneCall API subscription plan?
                 }
             });;
-    }
+    }, [appId, settings.city]);
 
     /**
     * Refresh the data
@@ -70,7 +70,7 @@ const WeatherChart: React.FC<WeatherChartProps> = (props) => {
         const intervalHourly = setInterval(() => { fetchWeatherHourly() }, 1000 * 60 * 60 * 1);  // 1 hour
 
         return () => { clearInterval(intervalHourly) }
-    }, []);
+    }, [fetchWeatherHourly]);
 
     /**
      * Set the points to display on the graph, and the min & max temperatures
@@ -92,7 +92,9 @@ const WeatherChart: React.FC<WeatherChartProps> = (props) => {
                 return;
             }
 
-            const temperatureRounded = Math.round(weatherHour.feels_like ?? weatherHour.temp)
+            const temperatureRounded = Math.round(
+                settings.chart.temperature === TemperatureType.FEELS_LIKE ? weatherHour.feels_like : weatherHour.temp
+            );
 
             if (temperatureRounded < tempMin) {
                 tempMin = temperatureRounded;
@@ -103,9 +105,19 @@ const WeatherChart: React.FC<WeatherChartProps> = (props) => {
 
             const rainValue = weatherHour.rain?.["1h"] ?? 0;
 
+            let windValue = Math.round(
+                inKmH(
+                    settings.chart.wind === WindType.GUST ? weatherHour.wind_gust : weatherHour.wind_speed
+                )
+            );
+            if (windValue > 100) {
+                windValue = 100;
+            }
+
             dataPoints.push({
                 time: `${moment.unix(weatherHour.dt).format("HH")}h`,
                 temperature: temperatureRounded,
+                wind: windValue,
                 // Convert to a "percentage" like we do in the rain bar
                 rain: getWeatherRainMinuteCoefficient(rainValue) * 100,
             });
@@ -118,7 +130,7 @@ const WeatherChart: React.FC<WeatherChartProps> = (props) => {
             setMaxTemp(tempMax);
         }
 
-    }, [weatherHourly]);
+    }, [settings.chart.temperature, settings.chart.wind, weatherHourly]);
 
     if (
         weatherHourly !== null
@@ -167,16 +179,15 @@ const WeatherChart: React.FC<WeatherChartProps> = (props) => {
                         />
 
                         <YAxis
-                            color={indigo[200]}
                             orientation="right"
-                            width={50}
+                            width={settings.chart.wind ? 100 : 50}
                             type="number"
                             domain={[0, 100]}
                             yAxisId="rain"
                             tickCount={10}
                             interval="preserveStartEnd"
                             allowDecimals={false}
-                            unit="%"
+                            unit={`%${settings.chart.wind ? " - km/h" : ""}`}
                             tick={{
                                 stroke: theme.palette.text.primary,
                                 strokeWidth: .3,
@@ -202,8 +213,21 @@ const WeatherChart: React.FC<WeatherChartProps> = (props) => {
                             dot={false}
                         />
 
+                        {settings.chart.wind &&
+                            <Line
+                                yAxisId="rain"
+                                type="monotone"
+                                dataKey="wind"
+                                stroke={red[200]}
+                                opacity={.5}
+                                strokeWidth={2}
+                                dot={false}
+                            />
+                        }
+
                         <Legend
                             wrapperStyle={{ paddingTop: theme.spacing(2) }}
+
                         />
 
                         <CartesianGrid stroke="#4d4d4d" strokeDasharray="5 5" />

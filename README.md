@@ -20,7 +20,7 @@ The app jumps automatically between modules and shows progressBars. The time spe
 
 ## Screenshots
 ![Clock and Time (screenshot)](./docs/screenshots/clock_and_time.jpeg)
-![Weather now (screenshot)](./docs/screenshots/weather_now.jpeg)
+![Weather now (screenshot)](./docs/screenshots/weather_now.jpg)
 ![Weather forecast (screenshot)](./docs/screenshots/weather_forecast.jpeg)
 
 ## Compatibility
