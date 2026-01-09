@@ -1,4 +1,5 @@
 import { Box, Link, Typography } from "@mui/material";
+import { TemperatureType, WeatherExtendedSettings } from "../../modules/Weather/model/WeatherExtendedSettings";
 import { ContentModule, ContentModuleType, USERDATA_LOCALSTORAGE_NAME } from "../model/ContentModule";
 import { CredentialName } from "../model/Credentials";
 import { UserData } from "../model/UserData";
@@ -11,12 +12,24 @@ export const getUserDataFromLocalStorage = (): UserData => {
 
     const saved = localStorage.getItem(USERDATA_LOCALSTORAGE_NAME);
 
-    if (saved) {
-        return JSON.parse(saved) as UserData;
-    }
-    else {
+    if (!saved) {
         return getDefaultUserData();
     }
+
+    const userData = JSON.parse(saved) as UserData;
+
+    // Breaking change v1.2.0
+    const weatherModules = userData.modules.filter((module) => module.type === ContentModuleType.WEATHER_NOW || module.type === ContentModuleType.WEATHER_FORECAST);
+    weatherModules.forEach((module) => {
+        const settings = module.extended_settings as WeatherExtendedSettings;
+        if (!settings.chart) {
+            settings.chart = {
+                temperature: TemperatureType.FEELS_LIKE,
+            };
+        }
+    });
+
+    return userData;
 }
 
 export const getDefaultUserData = (): UserData => {

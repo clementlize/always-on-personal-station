@@ -32,7 +32,7 @@ const SettingsAbout: React.FC<SettingsAboutProps> = () => {
             </Box>
 
             <Typography sx={{ marginTop: 2 }}>
-                Version 1.2.0
+                Version 1.2.1
             </Typography>
         </Box>
     );
