@@ -1,16 +1,18 @@
 import MyLocationIcon from '@mui/icons-material/MyLocation';
 import { Box, Checkbox, IconButton, MenuItem, Select, TextField, Typography } from "@mui/material";
 import { useState } from 'react';
+import { ContentModuleType } from '../../../app/model/ContentModule';
 import { TemperatureType, WeatherExtendedSettings, WindType } from "../model/WeatherExtendedSettings";
 
 interface WeatherSettingsProps {
     moduleSettings: WeatherExtendedSettings | undefined;
     setModuleSettings: (newSettings: WeatherExtendedSettings) => void;
+    moduleType: ContentModuleType;
 }
 
 const WeatherSettings: React.FC<WeatherSettingsProps> = (props) => {
 
-    const { moduleSettings, setModuleSettings } = props;
+    const { moduleSettings, setModuleSettings, moduleType } = props;
 
     const weatherSettings = {
         city: moduleSettings?.city ?? { name: "", lat: 0, lon: 0 },
@@ -107,78 +109,80 @@ const WeatherSettings: React.FC<WeatherSettingsProps> = (props) => {
                 />
             </Box>
 
-            <Box
-                display="flex"
-                flexDirection="column"
-                marginTop={2}
-            >
-                <Typography variant="h6">Chart</Typography>
-
+            {moduleType === ContentModuleType.WEATHER_NOW &&
                 <Box
                     display="flex"
                     flexDirection="column"
-                    marginLeft={2}
+                    marginTop={2}
                 >
-                    <Box
-                        display="flex"
-                        alignItems="center"
-                    >
-                        <Typography>Temperature type:</Typography>
-                        <Select
-                            value={weatherSettings.chart.temperature}
-                            sx={{ marginLeft: 2 }}
-                            onChange={(e) => setModuleSettings({
-                                ...weatherSettings,
-                                chart: {
-                                    ...weatherSettings.chart,
-                                    temperature: e.target.value as TemperatureType,
-                                }
-                            })}
-                        >
-                            <MenuItem value={TemperatureType.TEMPERATURE}>Temperature</MenuItem>
-                            <MenuItem value={TemperatureType.FEELS_LIKE}>Feels like</MenuItem>
-                        </Select>
-                    </Box>
+                    <Typography variant="h6">Chart</Typography>
 
                     <Box
                         display="flex"
-                        alignItems="center"
-                        marginTop={1}
+                        flexDirection="column"
+                        marginLeft={2}
                     >
-                        <Typography>Show wind:</Typography>
-                        <Checkbox
-                            checked={Boolean(weatherSettings.chart.wind)}
-                            onChange={(e) => setModuleSettings({
-                                ...weatherSettings,
-                                chart: {
-                                    ...weatherSettings.chart,
-                                    wind: e.target.checked ? WindType.GUST : undefined,
-                                }
-                            })}
-                            sx={{ marginLeft: 1 }}
-                        />
-                        {Boolean(weatherSettings.chart.wind) &&
-                            <>
-                                <Typography sx={{ marginLeft: 2 }}>Wind type:</Typography>
-                                <Select
-                                    value={weatherSettings.chart.wind}
-                                    sx={{ marginLeft: 2 }}
-                                    onChange={(e) => setModuleSettings({
-                                        ...weatherSettings,
-                                        chart: {
-                                            ...weatherSettings.chart,
-                                            wind: e.target.value as WindType,
-                                        }
-                                    })}
-                                >
-                                    <MenuItem value={WindType.SPEED}>Speed</MenuItem>
-                                    <MenuItem value={WindType.GUST}>Gust</MenuItem>
-                                </Select>
-                            </>
-                        }
+                        <Box
+                            display="flex"
+                            alignItems="center"
+                        >
+                            <Typography>Temperature type:</Typography>
+                            <Select
+                                value={weatherSettings.chart.temperature}
+                                sx={{ marginLeft: 2 }}
+                                onChange={(e) => setModuleSettings({
+                                    ...weatherSettings,
+                                    chart: {
+                                        ...weatherSettings.chart,
+                                        temperature: e.target.value as TemperatureType,
+                                    }
+                                })}
+                            >
+                                <MenuItem value={TemperatureType.TEMPERATURE}>Temperature</MenuItem>
+                                <MenuItem value={TemperatureType.FEELS_LIKE}>Feels like</MenuItem>
+                            </Select>
+                        </Box>
+
+                        <Box
+                            display="flex"
+                            alignItems="center"
+                            marginTop={1}
+                        >
+                            <Typography>Show wind:</Typography>
+                            <Checkbox
+                                checked={Boolean(weatherSettings.chart.wind)}
+                                onChange={(e) => setModuleSettings({
+                                    ...weatherSettings,
+                                    chart: {
+                                        ...weatherSettings.chart,
+                                        wind: e.target.checked ? WindType.GUST : undefined,
+                                    }
+                                })}
+                                sx={{ marginLeft: 1 }}
+                            />
+                            {Boolean(weatherSettings.chart.wind) &&
+                                <>
+                                    <Typography sx={{ marginLeft: 2 }}>Wind type:</Typography>
+                                    <Select
+                                        value={weatherSettings.chart.wind}
+                                        sx={{ marginLeft: 2 }}
+                                        onChange={(e) => setModuleSettings({
+                                            ...weatherSettings,
+                                            chart: {
+                                                ...weatherSettings.chart,
+                                                wind: e.target.value as WindType,
+                                            }
+                                        })}
+                                    >
+                                        <MenuItem value={WindType.SPEED}>Speed</MenuItem>
+                                        <MenuItem value={WindType.GUST}>Gust</MenuItem>
+                                    </Select>
+                                </>
+                            }
+                        </Box>
                     </Box>
                 </Box>
-            </Box>
+            }
         </Box>
     );
 }

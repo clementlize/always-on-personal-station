@@ -121,6 +121,7 @@ const SettingsModules: React.FC<SettingsModulesProps> = (props) => {
                             setModuleSettings={(newSettings: WeatherExtendedSettings) =>
                                 setModuleSettings(module, newSettings)
                             }
+                            moduleType={module.type}
                         />
                     </Box>
                 );
