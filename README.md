@@ -19,9 +19,10 @@ The app jumps automatically between modules and shows progressBars. The time spe
  - Next days weather forecast
 
 ## Screenshots
-![Clock and Time (screenshot)](./docs/screenshots/clock_and_time.jpeg)
-![Weather now (screenshot)](./docs/screenshots/weather_now.jpg)
-![Weather forecast (screenshot)](./docs/screenshots/weather_forecast.jpeg)
+![Clock and Time (screenshot)](./docs/screenshots/clock_and_time.png)
+![Weather now (screenshot)](./docs/screenshots/weather_now.png)
+![Weather forecast (screenshot)](./docs/screenshots/weather_forecast.png)
+![Settings - about (screenshot)](./docs/screenshots/settings_about.png)
 
 ## Compatibility
 
